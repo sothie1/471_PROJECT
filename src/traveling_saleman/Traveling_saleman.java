@@ -4,10 +4,9 @@
  */
 package traveling_saleman;
 
-/**
- *
- * @author Beautiful
- */
+import javax.swing.JOptionPane;
+
+
 public class Traveling_saleman {
 
     /**
@@ -15,5 +14,6 @@ public class Traveling_saleman {
      */
     public static void main(String[] args) {
         // TODO code application logic here
+        JOptionPane.showMessageDialog(null,"Hello World ");
     }
 }
