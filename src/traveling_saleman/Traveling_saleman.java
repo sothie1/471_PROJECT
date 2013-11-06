@@ -29,5 +29,7 @@ public class Traveling_saleman {
         ReadFile.readFromFile(args[0],coordinates);
         //Initialing the distant array;
         distant_coord = new double[coordinates.size()][coordinates.size()];
+        
+        JOptionPane.showMessageDialog(null,"Hello World");
     }
 }
