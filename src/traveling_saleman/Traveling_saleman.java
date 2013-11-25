@@ -10,6 +10,7 @@
  */
 package traveling_saleman;
 
+import Heuristics.ClosestNeighbor;
 import javax.swing.JOptionPane;
 import fileprocess.*;
 import java.util.ArrayList;
@@ -33,10 +34,19 @@ public class Traveling_saleman {
         ArrayList<Coordinate> coordinates = new ArrayList();
         //Reading the coordinates from the file and store them in the list
         ReadFile.readFromFile(args[0],coordinates);
-        //Initialing the distant array;
-        distant_coord = new double[coordinates.size()][coordinates.size()];
         
-        JOptionPane.showMessageDialog(null,"Hello World");
+        DistantTable distTable = new DistantTable(coordinates);
+        /*
+        distTable.printTable();
+        for (int i = 0;i<coordinates.size();i++){
+            for (int j=0;j<coordinates.size();j++){
+                System.out.println(distTable.getDistant(i, j));
+            }
+        }*/
+        ClosestNeighbor.findPath(distTable, 0);
+        
+        //Initialing the distant array;
+        distant_coord = new double[coordinates.size()][coordinates.size()];        
     }
     
     // Takes in a list of coordinates left to travel to, and then 2 nulls
