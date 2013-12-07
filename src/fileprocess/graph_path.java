@@ -12,6 +12,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Toolkit;
+import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -40,7 +41,7 @@ public class graph_path extends JFrame{
         
         drawPanel = new DrawPane(coords,path);
         drawPanel.setPreferredSize(new Dimension(400,400));
-        drawPanel.setBackground(Color.WHITE);
+        drawPanel.setBackground(Color.black);
         
         this.add(drawPanel);
         this.setVisible(true);
@@ -70,17 +71,18 @@ public class graph_path extends JFrame{
             super.paintComponent(g);
             Graphics2D g2 = (Graphics2D)g;
             g2.setStroke(new BasicStroke(1));
-            g2.setColor(Color.BLACK);
             
             for (int i = 0; i<path.size() -1;i++){
-                int scale_x = (int) ((coord.get((int)path.get(i)).getX()/max_x) * 400);
-                int scale_y = (int) ((coord.get((int)path.get(i)).getY()/max_y) * 400);
-                g2.drawOval(scale_x,scale_y, 2, 2);
+                int scale_x = (int) ((coord.get((int)path.get(i)).getX()/max_x) * 300);
+                int scale_y = (int) ((coord.get((int)path.get(i)).getY()/max_y) * 300);
+                Ellipse2D.Double circle = new Ellipse2D.Double(scale_x+50,scale_y+50, 4, 4);
+                g2.setColor(Color.WHITE);
+                g2.fill(circle);
                 
-                int scale_x2 = (int) ((coord.get((int)path.get(i + 1)).getX()/max_x) * 400);
-                int scale_y2 = (int) ((coord.get((int)path.get(i + 1)).getY()/max_y) * 400);
-                
-                g2.drawLine(scale_x, scale_y, scale_x2, scale_y2);
+                int scale_x2 = (int) ((coord.get((int)path.get(i + 1)).getX()/max_x) * 300);
+                int scale_y2 = (int) ((coord.get((int)path.get(i + 1)).getY()/max_y) * 300);
+                g2.setColor(Color.RED);
+                g2.drawLine(scale_x+50, scale_y+50, scale_x2+50, scale_y2+50);
             }
             //Draw the x-axis
             //g2.drawLine(0, 200, 400, 200);

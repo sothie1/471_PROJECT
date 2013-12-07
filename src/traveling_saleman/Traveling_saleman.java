@@ -11,6 +11,7 @@
 package traveling_saleman;
 
 import Heuristics.ClosestNeighbor;
+import Heuristics.ReverseNearestNeighbor;
 import javax.swing.JOptionPane;
 import fileprocess.*;
 import java.util.ArrayList;
@@ -43,7 +44,8 @@ public class Traveling_saleman {
                 System.out.println(distTable.getDistant(i, j));
             }
         }*/
-        ArrayList path = ClosestNeighbor.findPath(distTable, 0);
+        //ArrayList path = ClosestNeighbor.findPath(distTable, 0);
+        ArrayList<Integer> path = ReverseNearestNeighbor.findPath(distTable, 0);
         /*for (int i = 0;i < path.size(); i++){
             System.out.println(coordinates.get((int)path.get(i)).toString());
         }*/
