@@ -23,9 +23,8 @@ public class ClosestNeighbor {
         
     }
     
-    public static void findPath(DistantTable table, int startPoint){
+    public static ArrayList findPath(DistantTable table, int startPoint){
         ArrayList tovisit = new ArrayList();
-        
         ArrayList visited = new ArrayList();
         for (int i = 0; i<table.getPointNum();i++){
             if (i!=startPoint)
@@ -33,7 +32,6 @@ public class ClosestNeighbor {
         }
         
         visited.add(startPoint);
-        
         
         int currentNode = startPoint;
         while(tovisit.size() != 0){
@@ -54,10 +52,10 @@ public class ClosestNeighbor {
             tovisit.remove(tovisit.indexOf(nextPoint));
             currentNode = nextPoint;
         }
-        
+        /*
         for (int i =0;i<visited.size();i++){
             System.out.println(visited.get(i));
-        }
-        
+        }*/
+        return visited;
     }
 }
