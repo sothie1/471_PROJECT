@@ -56,6 +56,7 @@ public class ClosestNeighbor {
         for (int i =0;i<visited.size();i++){
             System.out.println(visited.get(i));
         }*/
+        visited.add(startPoint);
         return visited;
     }
 }

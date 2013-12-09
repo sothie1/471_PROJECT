@@ -10,6 +10,7 @@
  */
 package traveling_saleman;
 
+import Heuristics.ChristofidesAlgorithm;
 import Heuristics.ClosestNeighbor;
 import Heuristics.ReverseNearestNeighbor;
 import javax.swing.JOptionPane;
@@ -45,15 +46,17 @@ public class Traveling_saleman {
             }
         }*/
         //ArrayList path = ClosestNeighbor.findPath(distTable, 0);
-        ArrayList<Integer> path = ReverseNearestNeighbor.findPath(distTable, 0);
+        //ArrayList<Integer> path = ReverseNearestNeighbor.findPath(distTable, 0);
+        //ArrayList<Integer> path = ChristofidesAlgorithm.findPath(distTable, 0);
+        MST minimum_span = ChristofidesAlgorithm.findPath(distTable, 0);
         /*for (int i = 0;i < path.size(); i++){
             System.out.println(coordinates.get((int)path.get(i)).toString());
         }*/
         
         
         //For debugging purposes graphing the point and path
-        graph_path graph  = new graph_path(coordinates, path);
-       
+        //graph_path graph  = new graph_path(coordinates, path,distTable);
+       graph_path graph = new graph_path(coordinates, minimum_span, distTable);
     }
     
     // Takes in a list of coordinates left to travel to, and then 2 nulls
