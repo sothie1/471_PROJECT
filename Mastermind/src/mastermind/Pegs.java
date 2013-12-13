@@ -5,7 +5,6 @@
  */
 
 package mastermind;
-import java.util.List;
 /**
  *
  * @author MDavis
@@ -60,18 +59,6 @@ public class Pegs {
             if (this.values[i]!=other.Get(i)) {
                 diff = false; }}
         return diff;
-    }
-    
-    public boolean HasVisited(List<Pegs> list)
-    {
-        boolean check = false;
-        for (Pegs p : list) {
-            if (this.Equals(p))
-            {
-                check = true;
-                break;
-            }}
-        return check;
     }
     
     public int Get(int i) { return this.values[i]; }

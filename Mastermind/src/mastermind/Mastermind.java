@@ -5,7 +5,8 @@
  */
 package mastermind;
 import java.util.Random;
-import java.util.List;
+import java.util.ArrayList;
+import mastermind_strategies.Genetic;
 
 /**
  *
@@ -28,9 +29,7 @@ public class Mastermind {
         }
         System.out.println("]");
     }
-    
-    // public int? Evaluate(PegRow p) { }
-    
+        
     /**
      * @param solution
      * @param guess
@@ -58,7 +57,6 @@ public class Mastermind {
         {
             hit = false;
             if (guess_values[i] <0) continue;
-            
            for (j=0; j< NumberOfPegs; j++)
             {
                 if (!hit && solution_values[j] ==guess_values[j])
@@ -81,11 +79,24 @@ public class Mastermind {
         // The program will evaluate this somehow
     }
     
+    public static boolean HasVisited(Pegs test, ArrayList<Pegs> list)
+    {
+        boolean check = false;
+        for (Pegs p : list) {
+            if (test.Equals(p))
+            {
+                check = true;
+                break;
+            }}
+        return check;
+    }
+    
+    
+    
     public static void main(String[] args) {
         
         int i; // basic iterator, which probably gets reused
         
-        List<int[]> visited; // combinations already tried
         int[] solutionValues = new int[NumberOfPegs];
         int[] guessValues = new int[NumberOfPegs];
         for (i=0; i< NumberOfPegs; i++)
@@ -93,20 +104,17 @@ public class Mastermind {
             solutionValues[i] = R.nextInt(NumberOfColors);
             guessValues[i] = R.nextInt(NumberOfColors);
         }
-        
-        
-        
-        
         Pegs solution = new Pegs(solutionValues);
-        Pegs test = new Pegs(guessValues);
+        Pegs initial = new Pegs(guessValues);
         System.out.print("Solution: ");
         PrintRow(solution);
-        System.out.print("Guess 0: ");
-        PrintRow(test);
+        System.out.print("Initial: ");
+        PrintRow(initial);
         //Mutate(test2, 1.0f);
+        Genetic.Solve(initial, solution);
 
         
-       RowTest(solution,test);
+       RowTest(solution,initial);
     }
 
 }
