@@ -62,6 +62,18 @@ public class Pegs {
         return diff;
     }
     
+    public boolean HasVisited(List<Pegs> list)
+    {
+        boolean check = false;
+        for (Pegs p : list) {
+            if (this.Equals(p))
+            {
+                check = true;
+                break;
+            }}
+        return check;
+    }
+    
     public int Get(int i) { return this.values[i]; }
     
     public void Set(int i, int newvalue) { this.values[i] = newvalue; }
