@@ -6,7 +6,7 @@
 
 package mastermind_strategies;
 import java.util.ArrayList;
-import mastermind.Pegs;
+import mastermind.Pattern;
 import static mastermind.Mastermind.NumberOfPegs;
 import static mastermind.Mastermind.NumberOfColors;
 /**
@@ -17,10 +17,10 @@ public class Genetic {
     private static int ComboWeights[][];
     private static int MaximumSteps = 5;
     private static int PopulationSize = 3;
-    private static ArrayList<Pegs> visited;
-    private static Pegs best[];
+    private static ArrayList<Pattern> visited;
+    private static Pattern best[];
     
-    int Evaluate(Pegs solution, Pegs guess)
+    int Evaluate(Pattern solution, Pattern guess)
     {
         boolean hit;
         int i, j;
@@ -66,20 +66,20 @@ public class Genetic {
         // The program will evaluate this somehow
     }
     
-    public static void Solve(Pegs initial, Pegs solution)
+    public static void Solve(Pattern initial, Pattern solution)
     {
         visited = new ArrayList<>();
         int i, j; // iterators
         int topScore = 0;
         int newScore;
         ComboWeights = new int [NumberOfPegs][NumberOfColors];
-        best = new Pegs [PopulationSize];
+        best = new Pattern [PopulationSize];
         for (i=0; i<NumberOfPegs; i++)
             for (int j=0; j<NumberOfColors; j++)
                 ComboWeights[i][j]=0;
         visited.add(initial);
         for (i=0; i<MaximumSteps; i++){
-            Pegs nextnode = new Pegs(parent);
+            Pattern nextnode = new Pattern(parent);
             if (new >= topScore)
             {
                 for (j=0;j<NumberOfPegs;j++)
