@@ -3,12 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+<<<<<<< HEAD
 
 
 // Jamison Testing push
 
+=======
+>>>>>>> 267fac06d0f3f67620e7fc86cf7cc51c913d56c9
 package mastermind;
 import java.util.Random;
+import java.util.ArrayList;
+import mastermind_strategies.Genetic;
 
 /**
  *
@@ -17,68 +22,60 @@ import java.util.Random;
 public class Mastermind {
     
     public static int NumberOfPegs = 5;
-    public static String[] ColorPalette = {"Red", "Blue", "Green", "White",
+    public static int NumberOfColors = 4;
+    public static Random R = new Random();
+   
+    public static void PrintRow(Pegs p)
+    {
+        String[] ColorPalette = {"Red", "Blue", "Green", "White",
             "Yellow", "Magenta", "Cyan", "Black", "Orange"};
+        System.out.print("[");
+        for (int i=0; i<NumberOfPegs; i++)
+        {
+            System.out.print(ColorPalette[p.Get(i)]+" ");
+        }
+        System.out.println("]");
+    }
         
     /**
      * @param solution
      * @param guess
      */
-    public static void RowTest(PegRow solution, PegRow guess)
+    public static void RowTest(Pegs solution, Pegs guess)
     {
         boolean hit;
         int i, j;
         int score_match = 0;
         int score_miss = 0;
+        int [] solution_values = solution.ValuesCopy();
+        int [] guess_values = guess.ValuesCopy();
         // Reset:
-        solution.Reset();
-        guess.Reset();
 
         // Check for full matches
-        //System.out.println("Checking for full matches:");
         for (i = 0; i<NumberOfPegs; i++)
         {
-            //System.out.print(i+": Guessing "+guess.Get(i).GetColor()+"...");
-            if (solution.GetValue(i)==guess.GetValue(i))
+            if (solution_values[i]==guess_values[i])
             {
-                //System.out.println("-> Match at "+i);
                 score_match++;
-                guess.Set(i,-2);
-                solution.Set(i,-2);
+                guess_values[i] = solution_values[i] = -2;
             }     
-            //else System.out.println("");
-            //System.out.print("Solution: "); PrintRow();
-            //System.out.print("Guess:\t"); guess.PrintRow();
-        }
-
-        //System.out.println("Checking for missed colors:");
+          }
         for (i = 0; i<NumberOfPegs; i++)
         {
             hit = false;
-            if (guess.GetValue(i)<0)
-                continue;
-            //else System.out.println(i+": Guessing "+guess.Get(i).Print()+"...");
-            for (j=0; j< NumberOfPegs; j++)
+            if (guess_values[i] <0) continue;
+           for (j=0; j< NumberOfPegs; j++)
             {
-                if (hit==false &&
-                        solution.GetValue(j)==guess.GetValue(i))
+                if (!hit && solution_values[j] ==guess_values[j])
                 {
-                    guess.Set(i, -1);
-                    solution.Set(j,-1);
+                    guess_values[i] = solution_values[j] = -1;
                     hit = true;
                 }
             }
             if (hit==true) score_miss++;
-            //System.out.print("Solution: "); this.PrintRow();
-            //System.out.print("Guess:\t"); guess.PrintRow();
-
         }
-                    // This is what actually gets printed
-        solution.Reset();
-        guess.Reset();
-        //System.out.print("Solution: "); this.PrintRow();
-        //System.out.print("Guess:\t"); guess.PrintRow();
-        //System.out.print("Answer:\t");
+
+        System.out.print("Guess "+guess.Depth()+": ");
         for(i=0; i<score_match; i++)
             System.out.print("(=) ");
         for(i=0; i<score_miss; i++)
@@ -89,41 +86,42 @@ public class Mastermind {
         // The program will evaluate this somehow
     }
     
+    public static boolean HasVisited(Pegs test, ArrayList<Pegs> list)
+    {
+        boolean check = false;
+        for (Pegs p : list) {
+            if (test.Equals(p))
+            {
+                check = true;
+                break;
+            }}
+        return check;
+    }
+    
+    
+    
     public static void main(String[] args) {
-        // TODO code application logic here
         
-        //int NumberOfPegs = 5;
-        int NumberOfColors = 4;
-        int i;
-
-        Random randGen = new Random();
-        
+        int i; // basic iterator, which probably gets reused
         
         int[] solutionValues = new int[NumberOfPegs];
         int[] guessValues = new int[NumberOfPegs];
-        
-        NumberOfColors = Math.min(NumberOfColors, ColorPalette.length);
-        
-        
-        
-        
         for (i=0; i< NumberOfPegs; i++)
         {
-            solutionValues[i] = randGen.nextInt(NumberOfColors);
-            guessValues[i] = randGen.nextInt(NumberOfColors);
+            solutionValues[i] = R.nextInt(NumberOfColors);
+            guessValues[i] = R.nextInt(NumberOfColors);
         }
-        
-        
-        
-        
-        PegRow solution = new PegRow(solutionValues);
-        PegRow test = new PegRow(guessValues);
+        Pegs solution = new Pegs(solutionValues);
+        Pegs initial = new Pegs(guessValues);
         System.out.print("Solution: ");
-        solution.PrintRow();
-        System.out.print("Guess 0: ");
-        test.PrintRow();
+        PrintRow(solution);
+        System.out.print("Initial: ");
+        PrintRow(initial);
+        //Mutate(test2, 1.0f);
+        Genetic.Solve(initial, solution);
+
         
-        RowTest(solution,test);
+       RowTest(solution,initial);
     }
 
 }
