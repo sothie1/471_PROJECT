@@ -3,13 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-<<<<<<< HEAD
 
 
-// Jamison Testing push
+// Jamison Testing push part 2
 
-=======
->>>>>>> 267fac06d0f3f67620e7fc86cf7cc51c913d56c9
 package mastermind;
 import java.util.Random;
 import java.util.ArrayList;
