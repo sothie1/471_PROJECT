@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -59,7 +60,7 @@ public class FiveGuess {
         try{
             s1 = new Scanner(txtFile);
             String [] sumthin2 = new String[2];
-            while((sumthin2 = s1.nextLine().split("")) != null){
+            while((sumthin2 = s1.nextLine().split(" ")) != null){
                 gamePossible[count2] = Integer.parseInt(sumthin2[1]);
                 games[count2] = Integer.parseInt(sumthin2[0]);
                 count2++;
@@ -80,9 +81,10 @@ public class FiveGuess {
                     
         private int numChars;
         private int gamePossible;
+        private ArrayList<Pattern> prevGuesses;
         private int[] available;
         private int[] answerArray;
-        private int[] remaining;
+        private int[] remaining;  
         
         public gNode(int game, int numChars, int gamePossible){  
           this.numChars = numChars;
@@ -98,6 +100,7 @@ public class FiveGuess {
           {
             answerArray[i] = temp.charAt(i) - '0';
           }
+          /*
           remaining = new int[1296];
           ArrayList<Integer> test = new ArrayList<Integer>();
           int counter = 0;
@@ -118,23 +121,39 @@ public class FiveGuess {
                   }
               }
           }
+          */
          }
         
         public void start(){
             System.out.println("Starting game");
+            System.out.print("Answer is: ");
             for (Integer i: answerArray){
-                System.out.println(i);
+                System.out.print(i);
             }
+            System.out.println("\n");
             Pattern solution = new Pattern(answerArray);
             solution.NumberOfPegs = numChars;
+            
+            // Random guess
+            Random r = new Random();
+            int nextGuess = remaining[r.nextInt(1296)];
+            String temp = Integer.toString(nextGuess);
+            answerArray = new int[temp.length()];
+          for (int i = 0; i < temp.length(); i++)
+          {
+            answerArray[i] = temp.charAt(i) - '0';
+          }
+            
             Pattern guess = new Pattern(new int[]{1,2,3,4});
             guess.NumberOfPegs = numChars;
             guess.Evaluate(solution);
-            System.out.println(guess.CountMatch());
-            System.out.println(guess.CountMiss());
-            for (Integer i: remaining){
-                System.out.println(i);
-            }
+            System.out.println("Guess: " + nextGuess);
+            System.out.println("Matches: " + guess.CountMatch());
+            System.out.println("Misses: " + guess.CountMiss());
+            
+            
+            
+            
     }
     }
     public void playGames(){
@@ -146,7 +165,7 @@ public class FiveGuess {
        }
        allGames.get(0).start();
     }
-           public static void main(String[] args){
+    public static void main(String[] args){
         // this can be done via command line args if you so please
         System.out.println(args[0]);
         FiveGuess lol = new FiveGuess(args[0]);
