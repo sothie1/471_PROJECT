@@ -7,10 +7,14 @@ package mastermind;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
+import static mastermind.Mastermind.NumberOfColors;
+import static mastermind.Mastermind.NumberOfPegs;
+import static mastermind.Mastermind.MaxGuesses;
+import static mastermind.Mastermind.R;
 /**
  *
  * @author Jamison
@@ -19,13 +23,14 @@ public class FiveGuess {
     
     public int [] games;
     public int [] lengthEach;
+    public int [] gamePossible;
     private File txtFile;
     
     private FiveGuess(String txtFile){
         this.txtFile = new File(txtFile);
     }
     /*
-     * Read file for integer strings and stores them in games array
+     * Read file for integer strings and numColors and stores them in games array
      * SO UGLY BUT IT WORKS SO DON'T TOUCH
      */
     public void getGames(){
@@ -48,13 +53,15 @@ public class FiveGuess {
         }
         games = new int[numLinesInFile];
         lengthEach = new int[numLinesInFile];
+        gamePossible = new int[numLinesInFile];
         Scanner s1 = null;
         int count2 = 0;
         try{
             s1 = new Scanner(txtFile);
-            String sumthin2 = "";
-            while((sumthin2 = s1.nextLine()) != null){
-                games[count2] = Integer.parseInt(sumthin2);
+            String [] sumthin2 = new String[2];
+            while((sumthin2 = s1.nextLine().split("")) != null){
+                gamePossible[count2] = Integer.parseInt(sumthin2[1]);
+                games[count2] = Integer.parseInt(sumthin2[0]);
                 count2++;
             }
         }catch (Exception e){
@@ -70,34 +77,80 @@ public class FiveGuess {
     
     }
     public class gNode{
-        
-        private int gameAnswer;
+                    
         private int numChars;
-        private ArrayList<Integer> available;
+        private int gamePossible;
+        private int[] available;
+        private int[] answerArray;
+        private int[] remaining;
         
-        public gNode(int game, int numChars){
-          this.gameAnswer = game;  
+        public gNode(int game, int numChars, int gamePossible){  
           this.numChars = numChars;
-          available = new ArrayList<Integer>();
-          available.add(1);
-          available.add(2);
-          available.add(3);
-          available.add(4);
-          available.add(5);
-          available.add(6);
-        }
+          this.gamePossible = gamePossible;
+          
+          available = new int[gamePossible];
+          for (int i = 0; i < gamePossible; i++){
+              available[i] = i+1;
+          }
+          String temp = Integer.toString(game);
+          answerArray = new int[temp.length()];
+          for (int i = 0; i < temp.length(); i++)
+          {
+            answerArray[i] = temp.charAt(i) - '0';
+          }
+          remaining = new int[1296];
+          ArrayList<Integer> test = new ArrayList<Integer>();
+          int counter = 0;
+          for(int a =1; a <= 6; a++){
+              for(int b =1; b <= 6; b++){
+                  for(int c = 1; c <= 6; c++){
+                      for(int d = 1; d <= 6; d++){
+                          String l = Integer.toString(a);
+                          String k = Integer.toString(b);
+                          String j = Integer.toString(c);
+                          String h = Integer.toString(d);
+                          String g = (l + k + j + h);
+                          //remaining[counter] = Integer.parseInt(g);
+                          remaining[counter] = Integer.parseInt(g);
+                         // System.out.println(g);
+                          counter++;
+                      }
+                  }
+              }
+          }
+         }
         
-        public void playGame(){
-            
-        }
+        public void start(){
+            System.out.println("Starting game");
+            for (Integer i: answerArray){
+                System.out.println(i);
+            }
+            Pattern solution = new Pattern(answerArray);
+            solution.NumberOfPegs = numChars;
+            Pattern guess = new Pattern(new int[]{1,2,3,4});
+            guess.NumberOfPegs = numChars;
+            guess.Evaluate(solution);
+            System.out.println(guess.CountMatch());
+            System.out.println(guess.CountMiss());
+            for (Integer i: remaining){
+                System.out.println(i);
+            }
     }
-    
-    
-    public static void main(String[] args){
+    }
+    public void playGames(){
+       ArrayList<gNode> allGames = new ArrayList<gNode>();
+       int counter = 0;
+       for (Integer i: games){
+           allGames.add(new gNode(i, lengthEach[counter],gamePossible[counter]));
+           counter++;
+       }
+       allGames.get(0).start();
+    }
+           public static void main(String[] args){
         // this can be done via command line args if you so please
-        FiveGuess lol = new FiveGuess("C:/Users/Jamison/Documents/GitHub/471_PROJECT/Mastermind/input.txt");
+        System.out.println(args[0]);
+        FiveGuess lol = new FiveGuess(args[0]);
         lol.getGames();
+        lol.playGames();
     }
-    
-    
-}
+}  
