@@ -83,80 +83,99 @@ public class FiveGuess {
         private int numChars;
         private int gamePossible;
         private ArrayList<Pattern> prevGuesses;
+        private ArrayList<Integer> prevGuessInt;
+        private ArrayList<Integer> prevGuessHit;
+        private ArrayList<Integer> prevGuessMiss;
         private int[] available;
         private int[] answerArray;
-        private int[] remaining;  
+        private int[] remaining;
+        private int[] currGuess;
         
         public gNode(int game, int numChars, int gamePossible){  
           this.numChars = numChars;
           this.gamePossible = gamePossible;
-          
+          prevGuesses = new ArrayList<Pattern>();
+          prevGuessInt = new ArrayList<Integer>();
+          prevGuessHit = new ArrayList<Integer>();
+          prevGuessMiss = new ArrayList<Integer>();
           available = new int[gamePossible];
           for (int i = 0; i < gamePossible; i++){
               available[i] = i+1;
           }
           String temp = Integer.toString(game);
           answerArray = new int[temp.length()];
-          for (int i = 0; i < temp.length(); i++)
-          {
-            answerArray[i] = temp.charAt(i) - '0';
+          for (int i = 0; i < temp.length(); i++){
+             answerArray[i] = temp.charAt(i) - '0';
           }
-          /*
-          remaining = new int[1296];
-          ArrayList<Integer> test = new ArrayList<Integer>();
-          int counter = 0;
-          for(int a =1; a <= 6; a++){
-              for(int b =1; b <= 6; b++){
-                  for(int c = 1; c <= 6; c++){
-                      for(int d = 1; d <= 6; d++){
-                          String l = Integer.toString(a);
-                          String k = Integer.toString(b);
-                          String j = Integer.toString(c);
-                          String h = Integer.toString(d);
-                          String g = (l + k + j + h);
-                          //remaining[counter] = Integer.parseInt(g);
-                          remaining[counter] = Integer.parseInt(g);
-                         // System.out.println(g);
-                          counter++;
-                      }
-                  }
-              }
-          }
-          */
-         }
+      
+      }
         
+        public int[] getRandom(int length){
+            Random r = new Random();
+                 String temp = ""; //remaining[r.nextInt(1296 - 1)];
+                 int count = 0;
+                 while(count < numChars){
+                     int t = r.nextInt(length) + 1;
+                     temp += Integer.toString(t);
+                     count++;
+                 }
+                 prevGuessInt.add(Integer.parseInt(temp));
+                 currGuess = new int[temp.length()];
+                 for (int i = 0; i < temp.length(); i++)
+                 {
+                    currGuess[i] = temp.charAt(i) - '0';
+                 }
+                 return currGuess;
+        }
+
         public void start(){
             System.out.println("Starting game");
             System.out.print("Answer is: ");
             for (Integer i: answerArray){
                 System.out.print(i);
             }
-            System.out.println("\n");
+            System.out.println("Number of pegs first: " + numChars + "\n");
             Pattern solution = new Pattern(answerArray);
             NumberOfPegs = numChars;
-            
-            // Random guess
-            Random r = new Random();
-            int nextGuess = remaining[r.nextInt(1296)];
-            String temp = Integer.toString(nextGuess);
-            answerArray = new int[temp.length()];
-          for (int i = 0; i < temp.length(); i++)
-          {
-            answerArray[i] = temp.charAt(i) - '0';
-          }
-            
-            NumberOfPegs = numChars;
-            Pattern guess = new Pattern(new int[]{1,2,3,4});
-            NumberOfPegs = numChars;
-            guess.Evaluate(solution);
-            System.out.println("Guess: " + nextGuess);
-            System.out.println("Matches: " + guess.CountMatch());
-            System.out.println("Misses: " + guess.CountMiss());
-            
-            
-            
-            
-    }
+            // Random guss
+            Pattern guess = new Pattern(getRandom(gamePossible));
+            int numGuess = 0;
+            while(true){
+             //   System.out.println("Stuck here 1");
+                 numGuess++;
+                 //Pattern copyGuess = guess.Clone();
+                 System.out.println("Guessing now: " + guess.toString());
+                 guess.Evaluate(solution);
+                 prevGuesses.add(guess);
+                 prevGuessHit.add(guess.CountMatch());
+                 prevGuessMiss.add(guess.CountMiss());
+                 if (guess.CountMatch() == 4){
+                     if (numGuess <= 8){
+                        System.out.println("I won the game in " + numGuess + " moves! :)");
+                     }else{
+                         System.out.println("I lost the game in " + numGuess + " moves :(");
+                     }
+                     break;
+                 }
+                 while(true){
+           //          System.out.println("Stuck here 2");
+                     guess = new Pattern(getRandom(gamePossible));
+                     boolean consistent = true;
+                     for (int i = 0; i < prevGuesses.size(); i++){
+                         guess.Evaluate(prevGuesses.get(i));
+                         int numMatch = guess.CountMatch();
+                         int numMiss = guess.CountMiss();
+                         if ((numMatch != prevGuessHit.get(i)) || (numMiss != prevGuessMiss.get(i))){
+                             consistent = false;
+                             break;
+                        }
+                     }
+                     if (consistent){
+                         break;
+                     }
+                 }
+            }
+        }
     }
     public void playGames(){
        ArrayList<gNode> allGames = new ArrayList<gNode>();
@@ -166,9 +185,24 @@ public class FiveGuess {
            counter++;
        }
        allGames.get(0).start();
+       allGames.get(1).start();
+       allGames.get(2).start();
+       allGames.get(3).start();
+       allGames.get(4).start();
+       allGames.get(5).start();
+       allGames.get(6).start();
+       allGames.get(7).start();
+       
+   
+    int c = 0;
+       for (Integer g: games){
+        System.out.println("Game: " + g + " Length: " + lengthEach[c] + " Combins: " + gamePossible[c]);
+                c++;
+     }
     }
     public static void main(String[] args){
         // this can be done via command line args if you so please
+        System.out.println("WHAT THE FUCL");
         System.out.println(args[0]);
         FiveGuess lol = new FiveGuess(args[0]);
         lol.getGames();

@@ -7,6 +7,7 @@
 package mastermind;
 
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -175,7 +176,7 @@ public class Pattern {
         int score_miss = 0;
         int [] solution_values = solution.CopyValues();
         int [] guess_values = this.CopyValues();
-        for (i = 0; i<NumberOfPegs; i++) {
+        for (i = 0; i<solution_values.length; i++) {
             if (solution_values[i]==guess_values[i])
             { // Check for full matches
                 score_match++;
@@ -183,17 +184,23 @@ public class Pattern {
                 solution_values[i] = -2;    
         }}
         this.countMatch = score_match;
+        //JOptionPane.showMessageDialog(null,"Solution length: " + solution_values.length + " This length: " + this.values.length);
         for (i = 0; i<NumberOfPegs; i++) {
            for (j=0; j< NumberOfPegs; j++) {
+               try{
                 if (solution_values[i] == guess_values[j])
                 { // Miss = correct color, wrong place.
                     guess_values[j] = -1;
                     solution_values[i] = -2;
                     score_miss++;
                     break;
-        }}}
+        }
+               }catch(Exception e){
+                   System.out.println("solutionLength " + solution_values.length + " guess length: " + guess_values.length);
+               }
+           }}
         this.countMiss = score_miss;
-        System.out.println("(Match: "+score_match+", miss: "+score_miss+")\n");
+      //  System.out.println("(Match: "+score_match+", miss: "+score_miss+")\n");
         // # match and # miss are set
     }
     
