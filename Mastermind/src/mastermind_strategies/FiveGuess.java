@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package mastermind;
+package mastermind_strategies;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import mastermind.Pattern;
 import static mastermind.Mastermind.NumberOfColors;
 import static mastermind.Mastermind.NumberOfPegs;
 import static mastermind.Mastermind.MaxGuesses;
@@ -126,9 +127,9 @@ public class FiveGuess {
                 System.out.println(i);
             }
             Pattern solution = new Pattern(answerArray);
-            solution.NumberOfPegs = numChars;
+            NumberOfPegs = numChars;
             Pattern guess = new Pattern(new int[]{1,2,3,4});
-            guess.NumberOfPegs = numChars;
+            NumberOfPegs = numChars;
             guess.Evaluate(solution);
             System.out.println(guess.CountMatch());
             System.out.println(guess.CountMiss());
