@@ -1,9 +1,6 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2013, The Council of Elrond
  */
-
 
 // Jamison Testing push part 2
 
@@ -13,26 +10,48 @@ import java.util.ArrayList;
 import mastermind_strategies.JellyGuess;
 
 /**
- *
- * @author Magnus Thoric, Lord of Falconhold and Warden of the Elderlands
+ * 
+ * @author Michael Davis, Sothiara Em, Jamison Hyman
  */
-public class Mastermind {
+public class Mastermind  {
     
     public static int NumberOfPegs = 4;
     public static int NumberOfColors = 4;
-    public static int MaxGuesses = 6;
+    public static int MaxGuesses = 10;
     public static Random R = new Random();
 
+    public static ArrayList<int[]> SearchSpace()
+    {
+        ArrayList<int[]> list = new ArrayList<int[]>();
+        int[] startArray = new int[NumberOfPegs];
+        Fun(list, startArray, 0);
+        return list;
+    }
+    
+    private static void Fun(ArrayList<int[]> list, int[] array, int depth)
+    {
+        int i;
+        for (i=0; i<NumberOfColors; i++) {
+            array[depth] = i;
+            if (depth == NumberOfPegs-1) list.add(array.clone());
+            else Fun(list, array, depth+1);
+        }
+    }
+    
+    public static String[] ColorPalette = {"Red", "Blue", "Green", "White",
+            "Yellow", "Magenta", "Cyan", "Black", "Orange"};
+    
     public static void main(String[] args) {
         
         int i; // basic iterator, which probably gets reused
-        String[] ColorPalette = {"Red", "Blue", "Green", "White",
-            "Yellow", "Magenta", "Cyan", "Black", "Orange"};
-        int[] solutionValues = {1, 2, 3, 0};
-        Pattern solution = new Pattern(solutionValues);
         
+        
+        Pattern solution = new Pattern(new int[]{0,1,2,3});
+
+        //ArrayList<int[]> ValueSpace =SearchSpace();
+        //Pattern solution = new Pattern(solutionValues);
         Pattern cluelessSolution = JellyGuess.Solve(solution);
-        //System.out.println(cluelessSolution.toString(ColorPalette));
+        System.out.println(cluelessSolution.toString(ColorPalette));
     }
 
 }

@@ -1,61 +1,68 @@
 /*
- * Copyright (C) 2013 Noxus Vile, Dark Lord of Blood and Master of the Doomlands
- *
- * This program is copyrighted under the Bro Code. It was written
- * for a school project by some cool dudes, who are much, much
- * cooler than any other programmer dude. This program is not to be
- * distributed, sold, donated, eaten, tickled, or defenestrated.
- * The creators of this software are not liable for the actions of
- * the user, nor what the user does with all that junk, all that
- * inside the user's trunk.  Violating the Bro Code voids the
- * warranty on this program, if such warranty would exist, and also
- * nullifies any degree of coolness of the user.
+ * Copyright (C) 2013, The Council of Elrond
  */
 
 package mastermind_strategies;
 import mastermind.Pattern;
 import java.util.ArrayList;
-import static mastermind.Mastermind.NumberOfColors;
 import static mastermind.Mastermind.NumberOfPegs;
 import static mastermind.Mastermind.MaxGuesses;
 import static mastermind.Mastermind.R;
+import static mastermind.Mastermind.ColorPalette;
 /**
- *
- * @author Noxus Vileus, Dark Lord of Evil and King of the Doomlands
+ * Random search algorithm.
+ * @author Michael Davis, Sothiara Em, Jamison Hyman
  */
 public class JellyGuess {
-    private static Pattern SolutionPattern;
-    private static Pattern ResponsePattern;
-    
+    private static int JellyGuesses;
+
     public static Pattern Solve(Pattern solution)
     {
-        System.out.println("Jelly solve: "+solution.toString());
-        int i = 0;
-        int depth = 0;
+        JellyGuesses = 0;
+        System.out.println("Random jelly solve: "+solution.toString(ColorPalette));
         boolean solved = false;
         Pattern guess = new Pattern();
         Pattern old_guess;
-        ArrayList<Pattern> visited = new ArrayList<>();
-
-        for (i=0; i<MaxGuesses; i++){
-            if (guess.HasVisited(visited))
-            {
-                i--;
-            }
-            else {
-                System.out.println("Guess "+i+":: "+guess.toString()+" vs. solution: "+solution.toString());
-                visited.add(guess);
-                if(guess.Equals(solution))
-                {
-                    solved = true; break;
-                }
-            }
+        ArrayList<int[]> unexplored = mastermind.Mastermind.SearchSpace();
+        ArrayList<int[]> visited = new ArrayList<int[]>();
+        int phase = 0;
+        int nextindex;
+        
+        while(JellyGuesses<MaxGuesses && !solved && unexplored.size()>0) {
+            unexplored.remove(guess.GetArray());
+            visited.add(guess.GetArray());
             guess.Evaluate(solution);
-            old_guess = guess;
-            guess = new Pattern();
-            guess.SetPrevious(old_guess);
+            System.out.print("Jelly guess "+JellyGuesses+": "+guess.toString(ColorPalette));
+            //System.out.print(" vs. solution: "+solution.toString(ColorPalette));
+            System.out.print(";\t"+ guess.CountMatch()+" match, "+guess.CountMiss()+" miss.");
+            System.out.println();
+            JellyGuesses++;
+            if (phase==0 && guess.CountMatch()+guess.CountMiss()==NumberOfPegs)
+            {
+                phase = 1;
+                for (int i=unexplored.size()-1; i>=0; i--){
+                    if (!guess.EquivalentV(unexplored.get(i)))
+                    {   unexplored.remove(i);   }
+                }
+                //System.out.println("Reduced space to "+unexplored.size());
+            }
+            if(guess.Equal(solution))
+            {
+                solved = true;
+                System.out.println("Solved!");
+            }
+            else
+            {
+                old_guess = guess;
+                /* THIS IS WHERE THE HEURISTIC GOES */
+                nextindex = R.nextInt(unexplored.size());
+                guess.SetPrevious(old_guess);
+                old_guess.SetNext(guess);
+                guess = new Pattern(unexplored.get(nextindex));
+            }
+            
         }
-        System.out.println("Solved:\t"+solved);
+        System.out.println("Solved? "+solved);
         return guess;
     }
     
