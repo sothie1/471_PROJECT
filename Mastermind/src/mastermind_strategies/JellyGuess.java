@@ -23,14 +23,15 @@ import static mastermind.Mastermind.R;
  *
  * @author Noxus Vileus, Dark Lord of Evil and King of the Doomlands
  */
-public class JellySearch {
+public class JellyGuess {
     private static Pattern SolutionPattern;
     private static Pattern ResponsePattern;
     
     public static Pattern Solve(Pattern solution)
     {
-        System.out.println("Clueless solve for: "+solution.toString());
+        System.out.println("Jelly solve: "+solution.toString());
         int i = 0;
+        int depth = 0;
         boolean solved = false;
         Pattern guess = new Pattern();
         Pattern old_guess;
@@ -42,18 +43,19 @@ public class JellySearch {
                 i--;
             }
             else {
-                System.out.println("Guess "+i+": "+guess.toString());
+                System.out.println("Guess "+i+":: "+guess.toString()+" vs. solution: "+solution.toString());
                 visited.add(guess);
                 if(guess.Equals(solution))
                 {
                     solved = true; break;
                 }
             }
+            guess.Evaluate(solution);
             old_guess = guess;
             guess = new Pattern();
             guess.SetPrevious(old_guess);
         }
-        System.out.println("Solved: "+solved);
+        System.out.println("Solved:\t"+solved);
         return guess;
     }
     

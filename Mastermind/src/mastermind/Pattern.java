@@ -124,7 +124,10 @@ public class Pattern {
      * @return 
      */
     public Pattern Previous() { return this.previous; }
-    public void SetPrevious(Pattern prevpeg) { this.previous = prevpeg; }
+    public void SetPrevious(Pattern prevpeg) {
+        this.previous = prevpeg;
+        this.depth = prevpeg.Depth()+1;
+    }
     
     /**
      * Child node
@@ -167,46 +170,31 @@ public class Pattern {
      */
     public void Evaluate(Pattern solution)
     {
-        boolean hit;
         int i, j;
         int score_match = 0;
         int score_miss = 0;
         int [] solution_values = solution.CopyValues();
         int [] guess_values = this.CopyValues();
-        // Check for full matches
-        for (i = 0; i<NumberOfPegs; i++)
-        {
+        for (i = 0; i<NumberOfPegs; i++) {
             if (solution_values[i]==guess_values[i])
-            {
+            { // Check for full matches
                 score_match++;
-                guess_values[i] = solution_values[i] = -2;
-            }     
-        }
+                guess_values[i] = -1;
+                solution_values[i] = -2;    
+        }}
         this.countMatch = score_match;
-        for (i = 0; i<NumberOfPegs; i++)
-        {
-            hit = false;
-            if (guess_values[i] <0) continue;
-           for (j=0; j< NumberOfPegs; j++)
-            {
-                if (!hit && solution_values[j] ==guess_values[j])
-                {
-                    guess_values[i] = solution_values[j] = -1;
-                    hit = true;
-                }
-            }
-            if (hit==true) score_miss++;
-        }
+        for (i = 0; i<NumberOfPegs; i++) {
+           for (j=0; j< NumberOfPegs; j++) {
+                if (solution_values[i] == guess_values[j])
+                { // Miss = correct color, wrong place.
+                    guess_values[j] = -1;
+                    solution_values[i] = -2;
+                    score_miss++;
+                    break;
+        }}}
         this.countMiss = score_miss;
-        System.out.print("Guess "+this.Depth()+": ");
-        for(i=0; i<score_match; i++)
-            System.out.print("(Match) ");
-        for(i=0; i<score_miss; i++)
-            System.out.print("(Miss) ");
-        for(i=0; i<(NumberOfPegs-score_match-score_miss); i++)
-            System.out.print("(-) ");
-        System.out.println();
-        // The program will evaluate this somehow
+        System.out.println("(Match: "+score_match+", miss: "+score_miss+")\n");
+        // # match and # miss are set
     }
     
     /**
@@ -220,9 +208,7 @@ public class Pattern {
         for (int i=0; i<list.size(); i++) { 
             p = list.get(i);
             if (this.Equals(p)==true)
-            {
-                return true;
-            }}
+                return true; }
         return false;
     }
 

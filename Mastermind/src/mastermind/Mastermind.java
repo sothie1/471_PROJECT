@@ -10,7 +10,7 @@
 package mastermind;
 import java.util.Random;
 import java.util.ArrayList;
-import mastermind_strategies.JellySearch;
+import mastermind_strategies.JellyGuess;
 
 /**
  *
@@ -20,7 +20,7 @@ public class Mastermind {
     
     public static int NumberOfPegs = 4;
     public static int NumberOfColors = 4;
-    public static int MaxGuesses = 10;
+    public static int MaxGuesses = 6;
     public static Random R = new Random();
 
     public static void main(String[] args) {
@@ -31,7 +31,7 @@ public class Mastermind {
         int[] solutionValues = {1, 2, 3, 0};
         Pattern solution = new Pattern(solutionValues);
         
-        Pattern cluelessSolution = JellySearch.Solve(solution);
+        Pattern cluelessSolution = JellyGuess.Solve(solution);
         //System.out.println(cluelessSolution.toString(ColorPalette));
     }
 
