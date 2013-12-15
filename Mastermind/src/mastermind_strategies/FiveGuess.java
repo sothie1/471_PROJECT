@@ -133,8 +133,7 @@ public class FiveGuess {
             }
             System.out.println("\n");
             Pattern solution = new Pattern(answerArray);
-<<<<<<< HEAD:Mastermind/src/mastermind/FiveGuess.java
-            solution.NumberOfPegs = numChars;
+            NumberOfPegs = numChars;
             
             // Random guess
             Random r = new Random();
@@ -146,9 +145,7 @@ public class FiveGuess {
             answerArray[i] = temp.charAt(i) - '0';
           }
             
-=======
             NumberOfPegs = numChars;
->>>>>>> 40a8e4039f83a7e8bd959b6248d3f55faa25c029:Mastermind/src/mastermind_strategies/FiveGuess.java
             Pattern guess = new Pattern(new int[]{1,2,3,4});
             NumberOfPegs = numChars;
             guess.Evaluate(solution);
