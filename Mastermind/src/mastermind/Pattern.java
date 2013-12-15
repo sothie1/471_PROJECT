@@ -7,11 +7,10 @@
 package mastermind;
 
 import java.util.ArrayList;
-import static mastermind.Mastermind.NumberOfPegs;
 
 /**
  *
- * @author MDavis
+ * @author Noxus Vileus, Dark Lord of Evil and King of the Doomlands
  */
 public class Pattern {
     private int[] values;
@@ -23,13 +22,21 @@ public class Pattern {
   
     int NumberOfPegs = Mastermind.NumberOfPegs;
 
-    // For a root node, manually specify a code
+    /**
+     * Constructor A: Pass in an array of integer values
+     * Can be used for root node
+     * @param pegvalues 
+     */
     public Pattern(int[] pegvalues)
     {
         this.values = pegvalues;
     }
     
-    // Randomly generate root node
+    /**
+     * Constructor B:
+     * Pass in no arguments: it randomly sets the integer values
+     * Used for root node
+     */
     public Pattern()
     {
         this.values = new int [NumberOfPegs];
@@ -39,7 +46,11 @@ public class Pattern {
         }
     }
     
-    // Returns a "child"
+    /**
+     * Constructor C: Make a child node of the arg parent Pattern
+     * Not used as the root node
+     * @param parent 
+     */
     public Pattern(Pattern parent)
     {
         this.previous = parent;
@@ -53,40 +64,96 @@ public class Pattern {
     }
     
     // Returns an absolute clone
+    /**
+     * Duplicates a Pattern node object, with all of the same values
+     * @return 
+     */
     public Pattern Clone()
     {
         Pattern clone = new Pattern(this);
         clone.previous = this.previous;
         clone.depth = this.depth;
         clone.next = this.next;
+        clone.countMatch = this.countMatch;
+        clone.countMiss = this.countMiss;
         return clone;
     }
     
+    /**
+     * Used to test whether or not a Pattern node has been visited
+     * @param other
+     * @return 
+     */
     public boolean Equals(Pattern other)
     {
-        boolean diff = true;
+        boolean equal = true;
         for(int i=0; i<NumberOfPegs; i++) {
             if (this.values[i]!=other.Get(i)) {
-                diff = false; }}
-        return diff;
+                equal = false;
+                break;
+            }}
+        return equal;
     }
     
-    public int Get(int i) { return this.values[i]; }
+    /**
+     * Polymorphism is cool.
+     * @param othervalues
+     * @return 
+     */
+    public boolean Equals(int[] othervalues)
+    {
+        boolean equal = true;
+        for(int i=0; i<NumberOfPegs; i++) {
+            if (this.values[i]!=othervalues[i]) {
+                equal = false;
+                break;
+            }}
+        return equal;
+    }
     
-    public void Set(int i, int newvalue) { this.values[i] = newvalue; }
+    /**
+     * Individual integer values
+     * @param index
+     * @return 
+     */
+    public int Get(int index) { return this.values[index]; }
+    public void Set(int index, int newvalue) { this.values[index] = newvalue; }
     
+    /**
+     * Parent node
+     * @return 
+     */
     public Pattern Previous() { return this.previous; }
-    public void SetPrevious(Pattern prevpeg) { this.previous = prevpeg; }
+    public void SetPrevious(Pattern prevpeg) {
+        this.previous = prevpeg;
+        this.depth = prevpeg.Depth()+1;
+    }
     
+    /**
+     * Child node
+     * @return 
+     */
     public Pattern Next() { return this.next; }
     public void SetNext(Pattern nextpeg) { this.next = nextpeg; }
     
+    /**
+     * The number of correct position + color pegs
+     * @return 
+     */
     public int CountMatch() {return this.countMatch; }
-    public void SetCountMatch(int newvalue) {this.countMatch = newvalue;}
+    //public void SetCountMatch(int newvalue) {this.countMatch = newvalue;}
     
+    /**
+     * The number of correct color / incorrect position pegs
+     * @return 
+     */
     public int CountMiss() {return this.countMiss; }
-    public void SetCountMiss(int newvalue) {this.countMiss = newvalue;}
+   // public void SetCountMiss(int newvalue) {this.countMiss = newvalue;}
     
+    /**
+     * Refers to individual pegs
+     * @return 
+     */
     public int[] GetValues() { return this.values; }
     public void SetValues(int[] newvalues) {
         for (int i=0; i<NumberOfPegs; i++)
@@ -95,62 +162,60 @@ public class Pattern {
         }
     }
     
+    /**
+     * Pass in the solution Pattern
+     * Sets the number of matching pegs
+     * Sets the number of missed pegs
+     * @param solution 
+     */
     public void Evaluate(Pattern solution)
     {
-        boolean hit;
         int i, j;
         int score_match = 0;
         int score_miss = 0;
         int [] solution_values = solution.CopyValues();
         int [] guess_values = this.CopyValues();
-        // Check for full matches
-        for (i = 0; i<NumberOfPegs; i++)
-        {
+        for (i = 0; i<NumberOfPegs; i++) {
             if (solution_values[i]==guess_values[i])
-            {
+            { // Check for full matches
                 score_match++;
-                guess_values[i] = solution_values[i] = -2;
-            }     
-        }
-        this.SetCountMatch(score_match);
-        for (i = 0; i<NumberOfPegs; i++)
-        {
-            hit = false;
-            if (guess_values[i] <0) continue;
-           for (j=0; j< NumberOfPegs; j++)
-            {
-                if (!hit && solution_values[j] ==guess_values[j])
-                {
-                    guess_values[i] = solution_values[j] = -1;
-                    hit = true;
-                }
-            }
-            if (hit==true) score_miss++;
-        }
-        this.SetCountMiss(score_miss);
-        System.out.print("Guess "+this.Depth()+": ");
-        for(i=0; i<score_match; i++)
-            System.out.print("(Match) ");
-        for(i=0; i<score_miss; i++)
-            System.out.print("(Miss) ");
-        for(i=0; i<(NumberOfPegs-score_match-score_miss); i++)
-            System.out.print("(-) ");
-        System.out.println();
-        // The program will evaluate this somehow
+                guess_values[i] = -1;
+                solution_values[i] = -2;    
+        }}
+        this.countMatch = score_match;
+        for (i = 0; i<NumberOfPegs; i++) {
+           for (j=0; j< NumberOfPegs; j++) {
+                if (solution_values[i] == guess_values[j])
+                { // Miss = correct color, wrong place.
+                    guess_values[j] = -1;
+                    solution_values[i] = -2;
+                    score_miss++;
+                    break;
+        }}}
+        this.countMiss = score_miss;
+        System.out.println("(Match: "+score_match+", miss: "+score_miss+")\n");
+        // # match and # miss are set
     }
     
+    /**
+     * Keep track of an ArrayList of visited nodes
+     * @param list
+     * @return 
+     */
     public boolean HasVisited(ArrayList<Pattern> list)
     {
-        boolean check = false;
-        for (Pattern p : list) {
-            if (this.Equals(p))
-            {
-                check = true;
-                break;
-            }}
-        return check;
+        Pattern p;
+        for (int i=0; i<list.size(); i++) { 
+            p = list.get(i);
+            if (this.Equals(p)==true)
+                return true; }
+        return false;
     }
 
+    /**
+     * Make a new int[] array with the same values as this Pattern
+     * @return 
+     */
     public int[] CopyValues()
     {
         int[] clone = new int[NumberOfPegs];
@@ -160,19 +225,28 @@ public class Pattern {
             
     public int Depth() { return this.depth; }
     
-    public void Print(String[] palette)
+    /**
+     * Print with a palette format -> map integers to strings
+     * @param palette 
+     */
+    public String toString(String[] palette)
     {
-        System.out.print("[");
+        String out = "[";
         for (int i=0; i<NumberOfPegs-1; i++)
-        { System.out.print(palette[this.values[i]]+", "); }
-        System.out.println(palette[this.values[NumberOfPegs-1]]+"]");
+        { out += palette[this.values[i]]+", "; }
+        out += palette[this.values[NumberOfPegs-1]]+"]";
+        return out;
     }
    
-    public void Print()
+    /**
+     * Print with no args -> just display int values
+     */
+    public String toString()
     {
-        System.out.print("[");
+        String out = "[";
         for (int i=0; i<NumberOfPegs-1; i++)
-        { System.out.print(this.values[i]+", "); }
-        System.out.println(this.values[NumberOfPegs-1]+"]");
+        { out += this.values[i]+", "; }
+        out += this.values[NumberOfPegs-1]+"]";
+        return out;
     }
 }

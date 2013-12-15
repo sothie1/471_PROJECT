@@ -10,41 +10,29 @@
 package mastermind;
 import java.util.Random;
 import java.util.ArrayList;
-import mastermind_strategies.Genetic;
+import mastermind_strategies.JellyGuess;
 
 /**
  *
- * @author MDavis
+ * @author Magnus Thoric, Lord of Falconhold and Warden of the Elderlands
  */
 public class Mastermind {
     
     public static int NumberOfPegs = 4;
     public static int NumberOfColors = 4;
-    public static int MaxGuesses = 10;
+    public static int MaxGuesses = 6;
     public static Random R = new Random();
-   
-  
-    
+
     public static void main(String[] args) {
         
         int i; // basic iterator, which probably gets reused
         String[] ColorPalette = {"Red", "Blue", "Green", "White",
             "Yellow", "Magenta", "Cyan", "Black", "Orange"};
-        int[] solutionValues = new int[NumberOfPegs];
-        int[] guessValues = new int[NumberOfPegs];
-        for (i=0; i< NumberOfPegs; i++)
-        {
-            solutionValues[i] = R.nextInt(NumberOfColors);
-            guessValues[i] = R.nextInt(NumberOfColors);
-        }
+        int[] solutionValues = {1, 2, 3, 0};
         Pattern solution = new Pattern(solutionValues);
-        Pattern initial = new Pattern(guessValues);
-        System.out.print("Solution: ");
-        solution.Print(ColorPalette);
-        System.out.print("Initial: ");
-        initial.Print(ColorPalette);
-        //Mutate(test2, 1.0f);
-        //Genetic.Solve(initial, solution);
+        
+        Pattern cluelessSolution = JellyGuess.Solve(solution);
+        //System.out.println(cluelessSolution.toString(ColorPalette));
     }
 
 }
