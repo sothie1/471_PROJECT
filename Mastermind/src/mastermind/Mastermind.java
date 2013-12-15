@@ -1,9 +1,6 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2013, The Council of Elrond
  */
-
 
 // Jamison Testing push part 2
 
@@ -13,8 +10,8 @@ import java.util.ArrayList;
 import mastermind_strategies.JellyGuess;
 
 /**
- *
- * @author Magnus Thoric, Lord of Falconhold and Warden of the Elderlands
+ * 
+ * @author Michael Davis, Sothiara Em, Jamison Hyman
  */
 public class Mastermind {
     

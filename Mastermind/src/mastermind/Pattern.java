@@ -1,16 +1,80 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2013, The Council of Elrond
  */
-
 package mastermind;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
- *
- * @author Noxus Vileus, Dark Lord of Evil and King of the Doomlands
+ * Class for row / node / set of pegs / sequence object
+ * Note: indices and color values are zero-based.
+ * 
+ * CONSTRUCTORS:
+ * Pattern()
+ *   -> Create a new pattern object of depth 0 with random values
+ * Pattern(int[] pegvalues)
+ *   -> Create a new pattern obj of depth 0 with specific values
+ * Pattern(Pattern parent)
+ *   -> Create a new pattern that has values of Pattern parent. This Pattern's
+ *      'previous' property points to the parent, and the parent's 'next'
+ *      property points to this Pattern.
+ * 
+ * PSEUDO-CONSTRUCTOR:
+ * Pattern Clone()
+ *   -> Create a new object that is an exact copy of this one. Unlike the
+ *      parent-based constructor, the cloned node has the same parent, child,
+ *      and depth, and this and the clone do not point to one another.
+ * 
+ * GET/SET METHODS:
+ * int Get(int index)
+ * void Set(int index, int newvalue)
+ *   -> The value of the sequence, at position 'index'.
+ * int[] GetValues()
+ * void SetValues(int[] newvalues)
+ *   -> The array itself. Should not use in most circumstances.
+ * int[] CopyValues()
+ *   -> A new array that is a copy of the array of this Pattern's values. This
+ *      way, modifying the new array does not alter this Pattern.
+ * int Depth()
+ *   -> Depth / current turn number.
+ * Pattern Next()
+ * void SetNext(Pattern nextpattern)
+ *   -> For graphs, this is the child node. Or, it's the next guess. Either way,
+ *      this is useful for getting the history of a game.
+ * Pattern Previous()
+ * void SetPrevious(Pattern previouspattern)
+ *   -> For graphs, this is the parent node. Or, it's the previous guess. Either
+ *      way, this is useful for getting the history of a game.
+ * int CountMatch()
+ *   -> The number of pegs that have the correct color and position. Important:
+ *      the Evaluate() function MUST be called before this.
+ * int CountMiss()
+ *   -> The number of pegs that have the correct color but wrong position.
+ *      Important: the Evaluate() function MUST be called before this.
+ * 
+ * COMPARING:
+ * void Evaluate(Pattern solution)
+ *   -> Crucial to evaluating this node. It compares the sequence against the
+ *      solution sequence. Then, it sets the number of correct and missed
+ *      values in this Pattern.
+ * boolean Equals(Pattern other)
+ *   -> Whether two Patterns have the same sequence of values.
+ * boolean Equals(int[] othervalues)
+ *   -> Whether this sequence of values matches a given sequence of values.
+ * boolean HasVisited(ArrayList<Pattern> visitedlist)
+ *   -> Whether this Pattern's values match the values of a visited Pattern.
+ * boolean HasVisited(int[][] visitedvalueslist)
+ *   -> Same as above, but compare to int array rather than a Pattern object.
+ * 
+ * OTHER:
+ * Pattern Shuffle()
+ *   -> Rearranges the values, without adding or removing values from the
+ *      sequence. Returns this Pattern (not a copy).
+ */
+
+/**
+ * @author Michael Davis, Sothiara Em, Jamison Hyman
  */
 public class Pattern {
     private int[] values;
@@ -21,6 +85,7 @@ public class Pattern {
     private int countMiss = 0;
   
     int NumberOfPegs = Mastermind.NumberOfPegs;
+    Random R = Mastermind.R;
 
     /**
      * Constructor A: Pass in an array of integer values
@@ -53,14 +118,10 @@ public class Pattern {
      */
     public Pattern(Pattern parent)
     {
-        this.previous = parent;
-        this.values = new int [NumberOfPegs];
         this.depth = parent.Depth() +1;
+        this.previous = parent;
         parent.SetNext(this);
-        for(int i=0; i<NumberOfPegs; i++)
-        {
-            this.values[i] = parent.Get(i);
-        }
+        this.values = parent.CopyValues();
     }
     
     // Returns an absolute clone
@@ -193,7 +254,7 @@ public class Pattern {
                     break;
         }}}
         this.countMiss = score_miss;
-        System.out.println("(Match: "+score_match+", miss: "+score_miss+")\n");
+        //System.out.println("(Match: "+score_match+", miss: "+score_miss+")");
         // # match and # miss are set
     }
     
@@ -212,6 +273,15 @@ public class Pattern {
         return false;
     }
 
+    public boolean HasVisited(int[][] listvalues)
+    {
+        for (int i=0; i<listvalues.length; i++) {
+            if (this.values==listvalues[i])
+                    return true;
+        }
+        return false;
+    }
+    
     /**
      * Make a new int[] array with the same values as this Pattern
      * @return 
@@ -228,6 +298,7 @@ public class Pattern {
     /**
      * Print with a palette format -> map integers to strings
      * @param palette 
+     * @return formatted string
      */
     public String toString(String[] palette)
     {
@@ -240,13 +311,35 @@ public class Pattern {
    
     /**
      * Print with no args -> just display int values
+     * @return string of int array
      */
-    public String toString()
+    @Override public String toString()
     {
         String out = "[";
         for (int i=0; i<NumberOfPegs-1; i++)
         { out += this.values[i]+", "; }
         out += this.values[NumberOfPegs-1]+"]";
         return out;
+    }  
+    
+    /**
+     * Rearrange the order, without changing pegs
+     * You do this once CountMatch + CountMiss = NumberOfPegs
+     * This is called the Fisher–Yates shuffle
+     * @return 
+     */
+    public Pattern Shuffle()
+    {
+        int index, v;
+ //       System.out.print("Shuffling "+this.toString());
+        for (int i = NumberOfPegs - 1; i > 1; i--)
+        {
+          index = R.nextInt(i);
+          v = this.values[index];
+          this.values[index] = this.values[i];
+          this.values[i] = v;
+        }
+ //       System.out.println(" to "+this.toString());    
+        return this;
     }
 }
