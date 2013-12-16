@@ -7,7 +7,7 @@
 package mastermind;
 import java.util.Random;
 import java.util.ArrayList;
-import mastermind_strategies.JellyGuess;
+import mastermind_strategies.*;
 
 /**
  * 
@@ -24,17 +24,18 @@ public class Mastermind  {
     {
         ArrayList<int[]> list = new ArrayList<int[]>();
         int[] startArray = new int[NumberOfPegs];
-        Fun(list, startArray, 0);
+        RecurseSS(list, startArray, 0);
         return list;
     }
     
-    private static void Fun(ArrayList<int[]> list, int[] array, int depth)
+    //
+    private static void RecurseSS(ArrayList<int[]> list, int[] array, int depth)
     {
         int i;
         for (i=0; i<NumberOfColors; i++) {
             array[depth] = i;
             if (depth == NumberOfPegs-1) list.add(array.clone());
-            else Fun(list, array, depth+1);
+            else RecurseSS(list, array, depth+1);
         }
     }
     
@@ -48,10 +49,11 @@ public class Mastermind  {
         
         Pattern solution = new Pattern(new int[]{0,1,2,3});
 
-        //ArrayList<int[]> ValueSpace =SearchSpace();
-        //Pattern solution = new Pattern(solutionValues);
-        Pattern cluelessSolution = JellyGuess.Solve(solution);
-        System.out.println(cluelessSolution.toString(ColorPalette));
+        System.out.println("Solution: "+solution.toString(ColorPalette));
+        GameResult game1 = JellyGuess.Solve(solution);
+        System.out.println("Jelly solve: "+game1.toString(ColorPalette));
+        GameResult game2 = SimpleGuess.Solve(solution);
+        System.out.println("Reducer solve: "+game2.toString(ColorPalette));
     }
 
 }

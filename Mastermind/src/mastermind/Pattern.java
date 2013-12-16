@@ -88,7 +88,7 @@ public class Pattern {
     public Pattern()
     {
         this.values = new int [NumberOfPegs];
-        for (int i=0; i<NumberOfPegs; i++)
+        for (int i=0; i<values.length; i++)
         {
             this.values[i] = Mastermind.R.nextInt(Mastermind.NumberOfColors);
         }
@@ -131,7 +131,7 @@ public class Pattern {
     public boolean Equal(Pattern other)
     {
         boolean equal = true;
-        for(int i=0; i<NumberOfPegs; i++) {
+        for(int i=0; i<values.length; i++) {
             if (this.values[i]!=other.Get(i)) {
                 equal = false;
                 break;
@@ -147,7 +147,7 @@ public class Pattern {
     public boolean EqualV(int[] othervalues)
     {
         boolean equal = true;
-        for(int i=0; i<NumberOfPegs; i++) {
+        for(int i=0; i<values.length; i++) {
             if (this.values[i]!=othervalues[i]) {
                 equal = false;
                 break;
@@ -195,7 +195,7 @@ public class Pattern {
      */
     public int[] GetArray() { return this.values; }
     public void SetArray(int[] newvalues) {
-        for (int i=0; i<NumberOfPegs; i++)
+        for (int i=0; i<values.length; i++)
         {
             this.values[i] = newvalues[i];
         }
@@ -203,7 +203,7 @@ public class Pattern {
     
    public boolean Contains(int value)
    {
-       for (int i=0; i<NumberOfPegs; i++)
+       for (int i=0; i<values.length; i++)
        {    if (this.values[i]==value)
                return true; }
        return false;
@@ -213,11 +213,11 @@ public class Pattern {
     {
         int i, j;
         int found = 0;
-        int [] qvalues = new int[NumberOfPegs];
-        System.arraycopy(othervalues, 0, qvalues, 0, NumberOfPegs);
+        int [] qvalues = new int[values.length];
+        System.arraycopy(othervalues, 0, qvalues, 0, values.length);
         int [] pvalues = this.CopyArray();
-        for (i = 0; i<NumberOfPegs; i++) {
-           for (j=0; j< NumberOfPegs; j++) {
+        for (i = 0; i<values.length; i++) {
+           for (j=0; j< values.length; j++) {
                 if (qvalues[i] == pvalues[j])
                 { // Miss = correct color, wrong place.
                     pvalues[j] = -1;
@@ -225,7 +225,7 @@ public class Pattern {
                     found++;
                     break;
         }}}
-        if (found==NumberOfPegs) return true;
+        if (found==values.length) return true;
         else return false;
     }
     
@@ -235,8 +235,8 @@ public class Pattern {
         int found = 0;
         int [] qvalues = other.CopyArray();
         int [] pvalues = this.CopyArray();
-        for (i = 0; i<NumberOfPegs; i++) {
-           for (j=0; j< NumberOfPegs; j++) {
+        for (i = 0; i<values.length; i++) {
+           for (j=0; j< values.length; j++) {
                 if (qvalues[i] == pvalues[j])
                 { // Miss = correct color, wrong place.
                     pvalues[j] = -1;
@@ -244,7 +244,7 @@ public class Pattern {
                     found++;
                     break;
         }}}
-        if (found==NumberOfPegs) return true;
+        if (found==values.length) return true;
         else return false;
     }
     
@@ -262,7 +262,7 @@ public class Pattern {
         int score_miss = 0;
         int [] solution_values = solution.CopyArray();
         int [] guess_values = this.CopyArray();
-        for (i = 0; i<NumberOfPegs; i++) {
+        for (i = 0; i<values.length; i++) {
             if (solution_values[i]==guess_values[i])
             { // Check for full matches
                 score_match++;
@@ -270,8 +270,8 @@ public class Pattern {
                 solution_values[i] = -2;    
         }}
         this.countMatch = score_match;
-        for (i = 0; i<NumberOfPegs; i++) {
-           for (j=0; j< NumberOfPegs; j++) {
+        for (i = 0; i<values.length; i++) {
+           for (j=0; j< values.length; j++) {
                 if (solution_values[i] == guess_values[j])
                 { // Miss = correct color, wrong place.
                     guess_values[j] = -1;
@@ -314,8 +314,8 @@ public class Pattern {
      */
     public int[] CopyArray()
     {
-        int[] clone = new int[NumberOfPegs];
-        System.arraycopy(this.values, 0, clone, 0, NumberOfPegs);
+        int[] clone = new int[values.length];
+        System.arraycopy(this.values, 0, clone, 0, values.length);
         return clone;
     }
             
@@ -329,9 +329,9 @@ public class Pattern {
     public String toString(String[] palette)
     {
         String out = "[";
-        for (int i=0; i<NumberOfPegs-1; i++)
+        for (int i=0; i<values.length-1; i++)
         { out += palette[this.values[i]]+", "; }
-        out += palette[this.values[NumberOfPegs-1]]+"]";
+        out += palette[this.values[values.length-1]]+"]";
         return out;
     }
    
@@ -342,9 +342,9 @@ public class Pattern {
     @Override public String toString()
     {
         String out = "[";
-        for (int i=0; i<NumberOfPegs-1; i++)
+        for (int i=0; i<values.length-1; i++)
         { out += this.values[i]+", "; }
-        out += this.values[NumberOfPegs-1]+"]";
+        out += this.values[values.length-1]+"]";
         return out;
     }  
     
@@ -358,7 +358,7 @@ public class Pattern {
     {
         int index, v;
  //       System.out.print("Shuffling "+this.toString());
-        for (int i = NumberOfPegs - 1; i > 1; i--)
+        for (int i = values.length - 1; i > 1; i--)
         {
           index = R.nextInt(i);
           v = this.values[index];

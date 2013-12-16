@@ -3,9 +3,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/MDavis/Documents/GitHub/471_PROJECT/Mastermind/src/mastermind_strategies/Genetic.java</file>
+            <file>file:/C:/Users/MDavis/Documents/GitHub/471_PROJECT/Mastermind/src/mastermind_strategies/SimpleGuess.java</file>
+            <file>file:/C:/Users/MDavis/Documents/GitHub/471_PROJECT/Mastermind/src/mastermind_strategies/JellyGuess.java</file>
+            <file>file:/C:/Users/MDavis/Documents/GitHub/471_PROJECT/Mastermind/src/mastermind/GameResult.java</file>
+            <file>file:/C:/Users/MDavis/Documents/GitHub/471_PROJECT/Mastermind/src/mastermind_strategies/FiveGuess.java</file>
             <file>file:/C:/Users/MDavis/Documents/GitHub/471_PROJECT/Mastermind/src/mastermind/Mastermind.java</file>
-            <file>file:/C:/Users/MDavis/Documents/GitHub/471_PROJECT/Mastermind/src/mastermind/Pattern.java</file>
         </group>
     </open-files>
 </project-private>

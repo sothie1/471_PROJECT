@@ -5,65 +5,46 @@
 package mastermind_strategies;
 import mastermind.Pattern;
 import java.util.ArrayList;
-import static mastermind.Mastermind.NumberOfPegs;
-import static mastermind.Mastermind.MaxGuesses;
-import static mastermind.Mastermind.R;
-import static mastermind.Mastermind.ColorPalette;
+import mastermind.GameResult;
+import static mastermind.Mastermind.*;
 /**
  * Random search algorithm.
  * @author Michael Davis, Sothiara Em, Jamison Hyman
  */
 public class JellyGuess {
-    private static int JellyGuesses;
+    public static int JellyGuesses;
 
-    public static Pattern Solve(Pattern solution)
+    public static GameResult Solve(Pattern solution)
     {
-        JellyGuesses = 0;
-        System.out.println("Random jelly solve: "+solution.toString(ColorPalette));
+        int NGuesses = 0;
         boolean solved = false;
         Pattern guess = new Pattern();
-        Pattern old_guess;
+        Pattern old_guess = null;
         ArrayList<int[]> unexplored = mastermind.Mastermind.SearchSpace();
-        ArrayList<int[]> visited = new ArrayList<int[]>();
-        int phase = 0;
+        ArrayList<int[]> visited = new ArrayList<>();
         int nextindex;
         
-        while(JellyGuesses<MaxGuesses && !solved && unexplored.size()>0) {
+        while(NGuesses<MaxGuesses && !solved && unexplored.size()>0) {
+            nextindex = R.nextInt(unexplored.size());
+            guess = new Pattern(unexplored.get(nextindex));            
             unexplored.remove(guess.GetArray());
             visited.add(guess.GetArray());
             guess.Evaluate(solution);
-            System.out.print("Jelly guess "+JellyGuesses+": "+guess.toString(ColorPalette));
-            //System.out.print(" vs. solution: "+solution.toString(ColorPalette));
-            System.out.print(";\t"+ guess.CountMatch()+" match, "+guess.CountMiss()+" miss.");
-            System.out.println();
-            JellyGuesses++;
-            if (phase==0 && guess.CountMatch()+guess.CountMiss()==NumberOfPegs)
-            {
-                phase = 1;
-                for (int i=unexplored.size()-1; i>=0; i--){
-                    if (!guess.EquivalentV(unexplored.get(i)))
-                    {   unexplored.remove(i);   }
-                }
-                //System.out.println("Reduced space to "+unexplored.size());
-            }
-            if(guess.Equal(solution))
-            {
-                solved = true;
-                System.out.println("Solved!");
-            }
+            if(guess.Equal(solution)) solved = true;
             else
             {
-                old_guess = guess;
                 /* THIS IS WHERE THE HEURISTIC GOES */
-                nextindex = R.nextInt(unexplored.size());
-                guess.SetPrevious(old_guess);
-                old_guess.SetNext(guess);
-                guess = new Pattern(unexplored.get(nextindex));
+                if (old_guess!=null)
+                { guess.SetPrevious(old_guess);
+                old_guess.SetNext(guess); }
+                old_guess = guess;
             }
+            NGuesses++;
             
         }
-        System.out.println("Solved? "+solved);
-        return guess;
+        //System.out.println("Solved? "+solved);
+        JellyGuesses = NGuesses;
+        return new GameResult(solution, guess, solved, NGuesses);
     }
     
 }
