@@ -1,17 +1,63 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2013, The Council of Elrond
  */
-
 package mastermind;
 
 import java.util.ArrayList;
-import javax.swing.JOptionPane;
+import java.util.Random;
 
 /**
- *
- * @author Noxus Vileus, Dark Lord of Evil and King of the Doomlands
+ * Class for row / node / set of pegs / sequence object
+ * Note: indices and color values are zero-based.
+ * 
+ * CONSTRUCTORS:
+ * Pattern() -> zero depth, random values
+ * Pattern(int[] pegvalues) -> zero depth, specified values
+ * Pattern(Pattern parent) -> parent depth + 1, parent values
+ * 
+ * PSEUDO-CONSTRUCTOR:
+ * Pattern Clone() -> create copy of the Pattern object
+ * 
+ * ACCESSOR METHODS:
+ * int Get(int index)
+ * int[] GetArray() -> returns the actual array object
+ * int[] CopyArray() -> returns a new array with the same values
+ * int Depth()
+ * Pattern Next()
+ * int CountMatch() -> correct color, correct position
+ * int CountMiss() -> correct color, incorrect position, not a match 
+ * 
+ * void Set(int index, int newvalue)
+ * void SetValues(int[] newvalues) -> Generally do not use
+ * void SetNext(Pattern nextpattern)
+ * void SetPrevious(Pattern previouspattern)
+ * 
+ * COMPARING:
+ * void Evaluate(Pattern solution)
+ *   -> Crucial to evaluating this node. It compares the sequence against the
+ *      solution sequence. Then, it sets the number of correct and missed
+ *      values in this Pattern.
+ * 
+ * boolean Equals(Pattern other)
+ * boolean EqualsV(int[] othervalues)
+ *   -> Whether this sequence of values matches a given sequence of values
+ * .
+ * boolean Equivalent(Pattern other)
+ * boolean EquivalentV(int[] othervalues)
+ *   -> Whether the set of values have the same values
+ * 
+ * boolean HasVisited(ArrayList<Pattern> visitedlist).
+ * boolean HasVisitedV(ArrayList<int[]> visitedvalueslist)
+ *   -> Same as above, but compare to int array rather than a Pattern object.
+ * 
+ * OTHER:
+ * Pattern Shuffle()
+ *   -> Rearranges the values, without adding or removing values from the
+ *      sequence. Returns this Pattern (not a copy).
+ */
+
+/**
+ * @author Michael Davis, Sothiara Em, Jamison Hyman
  */
 public class Pattern {
     private int[] values;
@@ -22,6 +68,7 @@ public class Pattern {
     private int countMiss = 0;
   
     int NumberOfPegs = Mastermind.NumberOfPegs;
+    Random R = Mastermind.R;
 
     /**
      * Constructor A: Pass in an array of integer values
@@ -41,7 +88,7 @@ public class Pattern {
     public Pattern()
     {
         this.values = new int [NumberOfPegs];
-        for (int i=0; i<NumberOfPegs; i++)
+        for (int i=0; i<values.length; i++)
         {
             this.values[i] = Mastermind.R.nextInt(Mastermind.NumberOfColors);
         }
@@ -54,14 +101,10 @@ public class Pattern {
      */
     public Pattern(Pattern parent)
     {
-        this.previous = parent;
-        this.values = new int [NumberOfPegs];
         this.depth = parent.Depth() +1;
+        this.previous = parent;
         parent.SetNext(this);
-        for(int i=0; i<NumberOfPegs; i++)
-        {
-            this.values[i] = parent.Get(i);
-        }
+        this.values = parent.CopyArray();
     }
     
     // Returns an absolute clone
@@ -85,10 +128,10 @@ public class Pattern {
      * @param other
      * @return 
      */
-    public boolean Equals(Pattern other)
+    public boolean Equal(Pattern other)
     {
         boolean equal = true;
-        for(int i=0; i<NumberOfPegs; i++) {
+        for(int i=0; i<values.length; i++) {
             if (this.values[i]!=other.Get(i)) {
                 equal = false;
                 break;
@@ -101,10 +144,10 @@ public class Pattern {
      * @param othervalues
      * @return 
      */
-    public boolean Equals(int[] othervalues)
+    public boolean EqualV(int[] othervalues)
     {
         boolean equal = true;
-        for(int i=0; i<NumberOfPegs; i++) {
+        for(int i=0; i<values.length; i++) {
             if (this.values[i]!=othervalues[i]) {
                 equal = false;
                 break;
@@ -142,26 +185,69 @@ public class Pattern {
      * @return 
      */
     public int CountMatch() {return this.countMatch; }
-    //public void SetCountMatch(int newvalue) {this.countMatch = newvalue;}
-    
-    /**
-     * The number of correct color / incorrect position pegs
-     * @return 
-     */
+    public void SetCountMatch(int newvalue) {this.countMatch = newvalue;}
     public int CountMiss() {return this.countMiss; }
-   // public void SetCountMiss(int newvalue) {this.countMiss = newvalue;}
+    public void SetCountMiss(int newvalue) {this.countMiss = newvalue;}
     
     /**
      * Refers to individual pegs
      * @return 
      */
-    public int[] GetValues() { return this.values; }
-    public void SetValues(int[] newvalues) {
-        for (int i=0; i<NumberOfPegs; i++)
+    public int[] GetArray() { return this.values; }
+    public void SetArray(int[] newvalues) {
+        for (int i=0; i<values.length; i++)
         {
             this.values[i] = newvalues[i];
         }
     }
+    
+   public boolean Contains(int value)
+   {
+       for (int i=0; i<values.length; i++)
+       {    if (this.values[i]==value)
+               return true; }
+       return false;
+   }
+    
+    public boolean EquivalentV(int[] othervalues)
+    {
+        int i, j;
+        int found = 0;
+        int [] qvalues = new int[values.length];
+        System.arraycopy(othervalues, 0, qvalues, 0, values.length);
+        int [] pvalues = this.CopyArray();
+        for (i = 0; i<values.length; i++) {
+           for (j=0; j< values.length; j++) {
+                if (qvalues[i] == pvalues[j])
+                { // Miss = correct color, wrong place.
+                    pvalues[j] = -1;
+                    qvalues[i] = -2;
+                    found++;
+                    break;
+        }}}
+        if (found==values.length) return true;
+        else return false;
+    }
+    
+    public boolean Equivalent(Pattern other)
+    {
+        int i, j;
+        int found = 0;
+        int [] qvalues = other.CopyArray();
+        int [] pvalues = this.CopyArray();
+        for (i = 0; i<values.length; i++) {
+           for (j=0; j< values.length; j++) {
+                if (qvalues[i] == pvalues[j])
+                { // Miss = correct color, wrong place.
+                    pvalues[j] = -1;
+                    qvalues[i] = -2;
+                    found++;
+                    break;
+        }}}
+        if (found==values.length) return true;
+        else return false;
+    }
+    
     
     /**
      * Pass in the solution Pattern
@@ -174,9 +260,9 @@ public class Pattern {
         int i, j;
         int score_match = 0;
         int score_miss = 0;
-        int [] solution_values = solution.CopyValues();
-        int [] guess_values = this.CopyValues();
-        for (i = 0; i<solution_values.length; i++) {
+        int [] solution_values = solution.CopyArray();
+        int [] guess_values = this.CopyArray();
+        for (i = 0; i<values.length; i++) {
             if (solution_values[i]==guess_values[i])
             { // Check for full matches
                 score_match++;
@@ -184,9 +270,8 @@ public class Pattern {
                 solution_values[i] = -2;    
         }}
         this.countMatch = score_match;
-        //JOptionPane.showMessageDialog(null,"Solution length: " + solution_values.length + " This length: " + this.values.length);
-        for (i = 0; i<NumberOfPegs; i++) {
-           for (j=0; j< NumberOfPegs; j++) {
+        for (i = 0; i<values.length; i++) {
+           for (j=0; j< values.length; j++) {
                try{
                 if (solution_values[i] == guess_values[j])
                 { // Miss = correct color, wrong place.
@@ -200,7 +285,7 @@ public class Pattern {
                }
            }}
         this.countMiss = score_miss;
-      //  System.out.println("(Match: "+score_match+", miss: "+score_miss+")\n");
+        //System.out.println("(Match: "+score_match+", miss: "+score_miss+")");
         // # match and # miss are set
     }
     
@@ -214,19 +299,28 @@ public class Pattern {
         Pattern p;
         for (int i=0; i<list.size(); i++) { 
             p = list.get(i);
-            if (this.Equals(p)==true)
+            if (this.Equal(p)==true)
                 return true; }
         return false;
     }
 
+    public boolean HasVisitedV(ArrayList<int[]> listvalues)
+    {
+        for (int i=0; i<listvalues.size(); i++) {
+            if (this.values==listvalues.get(i))
+                    return true;
+        }
+        return false;
+    }
+    
     /**
      * Make a new int[] array with the same values as this Pattern
      * @return 
      */
-    public int[] CopyValues()
+    public int[] CopyArray()
     {
-        int[] clone = new int[NumberOfPegs];
-        System.arraycopy(this.values, 0, clone, 0, NumberOfPegs);
+        int[] clone = new int[values.length];
+        System.arraycopy(this.values, 0, clone, 0, values.length);
         return clone;
     }
             
@@ -235,25 +329,48 @@ public class Pattern {
     /**
      * Print with a palette format -> map integers to strings
      * @param palette 
+     * @return formatted string
      */
     public String toString(String[] palette)
     {
         String out = "[";
-        for (int i=0; i<NumberOfPegs-1; i++)
+        for (int i=0; i<values.length-1; i++)
         { out += palette[this.values[i]]+", "; }
-        out += palette[this.values[NumberOfPegs-1]]+"]";
+        out += palette[this.values[values.length-1]]+"]";
         return out;
     }
    
     /**
      * Print with no args -> just display int values
+     * @return string of int array
      */
-    public String toString()
+    @Override public String toString()
     {
         String out = "[";
-        for (int i=0; i<NumberOfPegs-1; i++)
+        for (int i=0; i<values.length-1; i++)
         { out += this.values[i]+", "; }
-        out += this.values[NumberOfPegs-1]+"]";
+        out += this.values[values.length-1]+"]";
         return out;
+    }  
+    
+    /**
+     * Rearrange the order, without changing pegs
+     * You do this once CountMatch + CountMiss = NumberOfPegs
+     * This is called the Fisher–Yates shuffle
+     * @return 
+     */
+    public Pattern Shuffle()
+    {
+        int index, v;
+ //       System.out.print("Shuffling "+this.toString());
+        for (int i = values.length - 1; i > 1; i--)
+        {
+          index = R.nextInt(i);
+          v = this.values[index];
+          this.values[index] = this.values[i];
+          this.values[i] = v;
+        }
+ //       System.out.println(" to "+this.toString());    
+        return this;
     }
 }
