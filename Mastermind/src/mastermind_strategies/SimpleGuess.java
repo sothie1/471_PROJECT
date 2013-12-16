@@ -6,6 +6,7 @@ package mastermind_strategies;
 import mastermind.Pegs;
 import java.util.ArrayList;
 import mastermind.GameResult;
+import mastermind.Reply;
 import static mastermind.Mastermind.*;
 /**
  * Random search algorithm. Reduces search space by eliminating
@@ -13,7 +14,7 @@ import static mastermind.Mastermind.*;
  * @author Michael Davis, Sothiara Em, Jamison Hyman
  */
 public class SimpleGuess {
-    private static int ReducerGuesses;
+    private static int GuessCount;
 
     public static GameResult Solve(Pegs solution)
     {
@@ -21,51 +22,44 @@ public class SimpleGuess {
         int PegsLength = solution.GetArray().length;
         boolean solved = false;
         Pegs guess = new Pegs();
-        Pegs old_guess = null;
         ArrayList<int[]> unexplored = mastermind.Mastermind.SearchSpace();
         ArrayList<int[]> visited = new ArrayList<>();
-        int phase = 0;
+        int do_once = 0;
         int nextindex;
+        Reply reply = new Reply();
         
         while(NGuesses<MaxGuesses && !solved && unexplored.size()>0) {
+            NGuesses++;
             nextindex = R.nextInt(unexplored.size());
-            guess = new Pegs(unexplored.get(nextindex));
+            guess = new Pegs(guess);
+            guess.SetArray(unexplored.get(nextindex));
             unexplored.remove(guess.GetArray());
             visited.add(guess.GetArray());
-            guess.Evaluate(solution);
-            System.out.print("Reduction guess "+NGuesses+": "+guess.toString());
-            System.out.print(";\t"+ guess.CountMatch()+" match, "+guess.CountMiss()+" miss.");
+            reply = reply.Evaluate(guess, solution);
+            System.out.print("Simple guess "+NGuesses+": "+guess.toString());
+            System.out.print(";\t"+ reply.Match()+" match, "+reply.Miss()+" miss.");
             System.out.println();
-            if (phase==0 && guess.CountMatch()+guess.CountMiss()==PegsLength)
+            if (guess.CountMatch()==PegsLength)
             {
-                phase = 1;
+                solved = true;
+                break;
+            }
+            else if (do_once==0 && reply.Both()==PegsLength)
+            {
+                do_once = 1;
                 for (int i=unexplored.size()-1; i>=0; i--){
                     if (!guess.EquivalentV(unexplored.get(i)))
                     {unexplored.remove(i);   }
                 }
             }
-            if(guess.CountMatch()==PegsLength)
-            {
-                solved = true;
-                //System.out.println("Solved!");
+            else if (do_once==0) {
+                for (int i=unexplored.size()-1; i>=0; i--){
+                    if (guess.EquivalentV(unexplored.get(i)))
+                    {   unexplored.remove(i);   }
+                }
             }
-            else
-            {   
-                if (phase==0) {
-                    for (int i=unexplored.size()-1; i>=0; i--){
-                        if (guess.EquivalentV(unexplored.get(i)))
-                        {   unexplored.remove(i);   }
-                }}
-                /* THIS IS WHERE THE HEURISTIC GOES */
-                if (old_guess!=null)
-                { guess.SetPrevious(old_guess);
-                old_guess.SetNext(guess); }
-                old_guess = guess;
-            }
-            NGuesses++;
         }
-        ReducerGuesses = NGuesses;
-        //System.out.println("Solved? "+solved);
+        GuessCount = NGuesses;
         return new GameResult(solution, guess, solved, NGuesses);
     }
     

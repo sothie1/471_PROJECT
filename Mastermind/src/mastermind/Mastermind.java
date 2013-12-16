@@ -16,9 +16,9 @@ import mastermind_strategies.*;
  */
 public class Mastermind  {
     
-    public static int NumberOfPegs = 4;
-    public static int NumberOfColors = 5;
-    public static int MaxGuesses = 8;
+    public static int NumberOfPegs = 6;
+    public static int NumberOfColors = 8;
+    public static int MaxGuesses = 10;
     public static Random R = new Random();
 
     public static ArrayList<int[]> SearchSpace()
@@ -48,16 +48,16 @@ public class Mastermind  {
         
         int i; // basic iterator, which probably gets reused
         
-        
+        R.nextInt();
         Pegs solution = new Pegs();
 
-        System.out.println("Solution: "+solution.toString());
-        //GameResult game1 = JellyGuess.Solve(solution);
-        //System.out.println("Jelly solve: "+game1.toString(ColorPalette));
-        //GameResult game2 = SimpleGuess.Solve(solution);
-        //System.out.println("Reducer solve: "+game2.toString(ColorPalette));
-        //GameResult game3 = FiveGuess1.Solve(solution);
-        //System.out.println("5-guess solve: "+game3.toString(ColorPalette));
+        System.out.println("Solution:\t"+solution.toString());
+        GameResult game1 = JellyGuess.Solve(solution);
+        System.out.println("Jelly solve: "+game1.toString(ColorPalette));
+        GameResult game2 = SimpleGuess.Solve(solution);
+        System.out.println("Reducer solve: "+game2.toString(ColorPalette));
+        GameResult game3 = MayoGuess.Solve(solution);
+        System.out.println("Barney solve: "+game3.toString(ColorPalette));
     }
 
 }

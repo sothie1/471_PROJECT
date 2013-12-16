@@ -260,8 +260,8 @@ public class Pegs {
         //int i, j;
         Reply reply = new Reply(this, solution);
         
-        this.countMiss = reply.Misses();
-        this.countMatch = reply.Matches();
+        this.countMiss = reply.Miss();
+        this.countMatch = reply.Match();
         return reply;
         /*
         

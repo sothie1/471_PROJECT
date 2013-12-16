@@ -16,9 +16,9 @@ public class Reply {
     private int matches;
     private int misses;
     
-    public int Matches() { return this.matches; }
+    public int Match() { return this.matches; }
     
-    public int Misses() { return this.misses; }
+    public int Miss() { return this.misses; }
     
     public int Both() {return this.matches+this.misses;}
     
@@ -26,12 +26,21 @@ public class Reply {
     
     public boolean Equivalent()
     {return (this.matches+this.misses==pegs1.GetArray().length);}
-        
     
-    public Reply (Pegs p1, Pegs p2)
+    public Reply()
+    {;
+    }
+    
+    public Reply(Pegs p1, Pegs p2)
+    {
+        this.Evaluate(p1, p2);
+    }
+    
+    public Reply Evaluate (Pegs p1, Pegs p2)
     {
         this.pegs1 = p1; this.pegs2 = p2;
         int i, j;
+        this.matches = 0; this.misses =0;
         int [] p1values = p1.CopyArray();
         int [] p2values = p2.CopyArray();
         for (i = 0; i<p2values.length; i++) {
@@ -45,10 +54,11 @@ public class Reply {
            for (j=0; j< p2values.length; j++) {
                 if (p1values[i] == p2values[j])
                 { // Miss = correct color, wrong place.
-                    p1values[j] = -1;
-                    p2values[i] = -2;
+                    p1values[i] = -1;
+                    p2values[j] = -2;
                     this.misses++;
                     break;
            }}}
+        return this;
     }
 }
