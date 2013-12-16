@@ -1,62 +1,50 @@
 /*
- * Copyright (C) 2013 Noxus Vile, Dark Lord of Blood and Master of the Doomlands
- *
- * This program is copyrighted under the Bro Code. It was written
- * for a school project by some cool dudes, who are much, much
- * cooler than any other programmer dude. This program is not to be
- * distributed, sold, donated, eaten, tickled, or defenestrated.
- * The creators of this software are not liable for the actions of
- * the user, nor what the user does with all that junk, all that
- * inside the user's trunk.  Violating the Bro Code voids the
- * warranty on this program, if such warranty would exist, and also
- * nullifies any degree of coolness of the user.
+ * Copyright (C) 2013, The Council of Elrond
  */
 
 package mastermind_strategies;
 import mastermind.Pattern;
 import java.util.ArrayList;
-import static mastermind.Mastermind.NumberOfColors;
-import static mastermind.Mastermind.NumberOfPegs;
-import static mastermind.Mastermind.MaxGuesses;
-import static mastermind.Mastermind.R;
+import mastermind.GameResult;
+import static mastermind.Mastermind.*;
 /**
- *
- * @author Noxus Vileus, Dark Lord of Evil and King of the Doomlands
+ * Random search algorithm.
+ * @author Michael Davis, Sothiara Em, Jamison Hyman
  */
 public class JellyGuess {
-    private static Pattern SolutionPattern;
-    private static Pattern ResponsePattern;
-    
-    public static Pattern Solve(Pattern solution)
+    public static int JellyGuesses;
+
+    public static GameResult Solve(Pattern solution)
     {
-        System.out.println("Jelly solve: "+solution.toString());
-        int i = 0;
-        int depth = 0;
+        int NGuesses = 0;
         boolean solved = false;
         Pattern guess = new Pattern();
-        Pattern old_guess;
-        ArrayList<Pattern> visited = new ArrayList<>();
-
-        for (i=0; i<MaxGuesses; i++){
-            if (guess.HasVisited(visited))
-            {
-                i--;
-            }
-            else {
-                System.out.println("Guess "+i+":: "+guess.toString()+" vs. solution: "+solution.toString());
-                visited.add(guess);
-                if(guess.Equals(solution))
-                {
-                    solved = true; break;
-                }
-            }
+        Pattern old_guess = null;
+        ArrayList<int[]> unexplored = mastermind.Mastermind.SearchSpace();
+        ArrayList<int[]> visited = new ArrayList<>();
+        int nextindex;
+        
+        while(NGuesses<MaxGuesses && !solved && unexplored.size()>0) {
+            nextindex = R.nextInt(unexplored.size());
+            guess = new Pattern(unexplored.get(nextindex));            
+            unexplored.remove(guess.GetArray());
+            visited.add(guess.GetArray());
             guess.Evaluate(solution);
-            old_guess = guess;
-            guess = new Pattern();
-            guess.SetPrevious(old_guess);
+            if(guess.Equal(solution)) solved = true;
+            else
+            {
+                /* THIS IS WHERE THE HEURISTIC GOES */
+                if (old_guess!=null)
+                { guess.SetPrevious(old_guess);
+                old_guess.SetNext(guess); }
+                old_guess = guess;
+            }
+            NGuesses++;
+            
         }
-        System.out.println("Solved:\t"+solved);
-        return guess;
+        //System.out.println("Solved? "+solved);
+        JellyGuesses = NGuesses;
+        return new GameResult(solution, guess, solved, NGuesses);
     }
     
 }

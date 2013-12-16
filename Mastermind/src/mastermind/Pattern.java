@@ -272,7 +272,6 @@ public class Pattern {
         this.countMatch = score_match;
         for (i = 0; i<values.length; i++) {
            for (j=0; j< values.length; j++) {
-               try{
                 if (solution_values[i] == guess_values[j])
                 { // Miss = correct color, wrong place.
                     guess_values[j] = -1;
