@@ -4,7 +4,7 @@
  */
 
 package mastermind_strategies;
-import mastermind.Pattern;
+import mastermind.Pegs;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
@@ -18,10 +18,10 @@ import static mastermind.Mastermind.*;
 public class FiveGuess1 {
     
 /*
-    class Node extends Pattern{
+    class Node extends Pegs{
         public Node(){ super(); }
         public Node(int[] values){ super(values); }
-        public Node(Pattern parent) {super(parent); }
+        public Node(Pegs parent) {super(parent); }
         private int equivalents;
         public int CalcEquivalents(ArrayList<int[]> possible){
             this.equivalents = CountEquivalents(this.GetArray(),possible);
@@ -30,13 +30,13 @@ public class FiveGuess1 {
         public int Equivalents(){ return this.equivalents; }
     }
    */ 
-    public static GameResult Solve(Pattern solution)
+    public static GameResult Solve(Pegs solution)
     {
         int NGuesses = 0;
-        int PatternLength = solution.GetArray().length;
+        int PegsLength = solution.GetArray().length;
         boolean solved = false;
-        Pattern guess = null;
-        Pattern old_guess = null;
+        Pegs guess = null;
+        Pegs old_guess = null;
         ArrayList<int[]> unexplored = mastermind.Mastermind.SearchSpace();
         ArrayList<int[]> uniques = new ArrayList<>();
         ArrayList<int[]> visited = new ArrayList<>();
@@ -46,7 +46,7 @@ public class FiveGuess1 {
         
         while(NGuesses<MaxGuesses && !solved && unexplored.size()>0) {
             // next best pattern is the one with the most permutations
-            guess = NextBestPattern(unexplored);
+            guess = NextBestPegs(unexplored);
             unexplored.remove(guess.GetArray());
             visited.add(guess.GetArray());
             guess.Evaluate(solution);
@@ -55,7 +55,7 @@ public class FiveGuess1 {
             System.out.println();
             
             // If guess is equivalent to solution, remove all non-equivalents:
-            if (phase==0 && guess.CountMatch()+guess.CountMiss()==PatternLength)
+            if (phase==0 && guess.CountMatch()+guess.CountMiss()==PegsLength)
             {
                 phase = 1;
                 for (int i=unexplored.size()-1; i>=0; i--){
@@ -91,7 +91,7 @@ public class FiveGuess1 {
      * @param possible
      * @return 
      */
-    private static Pattern NextBestPattern(ArrayList<int[]> possible)
+    private static Pegs NextBestPegs(ArrayList<int[]> possible)
     {
         Collections.shuffle(possible, new Random(possible.size()));
         int[] bestvals = possible.get(0);
@@ -105,7 +105,7 @@ public class FiveGuess1 {
                 mostequivs = nextequivs;
             }
         }
-        return new Pattern(bestvals);
+        return new Pegs(bestvals);
     }
     
         

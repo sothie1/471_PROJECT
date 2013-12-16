@@ -3,7 +3,7 @@
  */
 
 package mastermind_strategies;
-import mastermind.Pattern;
+import mastermind.Pegs;
 import java.util.ArrayList;
 import mastermind.GameResult;
 import static mastermind.Mastermind.*;
@@ -14,23 +14,23 @@ import static mastermind.Mastermind.*;
 public class JellyGuess {
     public static int JellyGuesses;
 
-    public static GameResult Solve(Pattern solution)
+    public static GameResult Solve(Pegs solution)
     {
         int NGuesses = 0;
         boolean solved = false;
-        Pattern guess = new Pattern();
-        Pattern old_guess = null;
+        Pegs guess = new Pegs();
+        Pegs old_guess = null;
         ArrayList<int[]> unexplored = mastermind.Mastermind.SearchSpace();
         ArrayList<int[]> visited = new ArrayList<>();
         int nextindex;
         
         while(NGuesses<MaxGuesses && !solved && unexplored.size()>0) {
             nextindex = R.nextInt(unexplored.size());
-            guess = new Pattern(unexplored.get(nextindex));            
+            guess = new Pegs(unexplored.get(nextindex));            
             unexplored.remove(guess.GetArray());
             visited.add(guess.GetArray());
             guess.Evaluate(solution);
-            if(guess.Equal(solution)) solved = true;
+            if(guess.CountMatch()==guess.GetArray().length) solved = true;
             else
             {
                 /* THIS IS WHERE THE HEURISTIC GOES */

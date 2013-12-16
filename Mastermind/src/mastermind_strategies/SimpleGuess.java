@@ -3,7 +3,7 @@
  */
 
 package mastermind_strategies;
-import mastermind.Pattern;
+import mastermind.Pegs;
 import java.util.ArrayList;
 import mastermind.GameResult;
 import static mastermind.Mastermind.*;
@@ -15,13 +15,13 @@ import static mastermind.Mastermind.*;
 public class SimpleGuess {
     private static int ReducerGuesses;
 
-    public static GameResult Solve(Pattern solution)
+    public static GameResult Solve(Pegs solution)
     {
         int NGuesses = 0;
-        int PatternLength = solution.GetArray().length;
+        int PegsLength = solution.GetArray().length;
         boolean solved = false;
-        Pattern guess = new Pattern();
-        Pattern old_guess = null;
+        Pegs guess = new Pegs();
+        Pegs old_guess = null;
         ArrayList<int[]> unexplored = mastermind.Mastermind.SearchSpace();
         ArrayList<int[]> visited = new ArrayList<>();
         int phase = 0;
@@ -29,14 +29,14 @@ public class SimpleGuess {
         
         while(NGuesses<MaxGuesses && !solved && unexplored.size()>0) {
             nextindex = R.nextInt(unexplored.size());
-            guess = new Pattern(unexplored.get(nextindex));
+            guess = new Pegs(unexplored.get(nextindex));
             unexplored.remove(guess.GetArray());
             visited.add(guess.GetArray());
             guess.Evaluate(solution);
             System.out.print("Reduction guess "+NGuesses+": "+guess.toString());
             System.out.print(";\t"+ guess.CountMatch()+" match, "+guess.CountMiss()+" miss.");
             System.out.println();
-            if (phase==0 && guess.CountMatch()+guess.CountMiss()==PatternLength)
+            if (phase==0 && guess.CountMatch()+guess.CountMiss()==PegsLength)
             {
                 phase = 1;
                 for (int i=unexplored.size()-1; i>=0; i--){
@@ -44,7 +44,7 @@ public class SimpleGuess {
                     {unexplored.remove(i);   }
                 }
             }
-            if(guess.Equal(solution))
+            if(guess.CountMatch()==PegsLength)
             {
                 solved = true;
                 //System.out.println("Solved!");

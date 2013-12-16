@@ -49,15 +49,15 @@ public class Mastermind  {
         int i; // basic iterator, which probably gets reused
         
         
-        Pattern solution = new Pattern();
+        Pegs solution = new Pegs();
 
         System.out.println("Solution: "+solution.toString());
         //GameResult game1 = JellyGuess.Solve(solution);
         //System.out.println("Jelly solve: "+game1.toString(ColorPalette));
         //GameResult game2 = SimpleGuess.Solve(solution);
         //System.out.println("Reducer solve: "+game2.toString(ColorPalette));
-        GameResult game3 = FiveGuess1.Solve(solution);
-        System.out.println("5-guess solve: "+game3.toString(ColorPalette));
+        //GameResult game3 = FiveGuess1.Solve(solution);
+        //System.out.println("5-guess solve: "+game3.toString(ColorPalette));
     }
 
 }

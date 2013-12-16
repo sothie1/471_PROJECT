@@ -11,59 +11,59 @@ import java.util.Random;
  * Note: indices and color values are zero-based.
  * 
  * CONSTRUCTORS:
- * Pattern() -> zero depth, random values
- * Pattern(int[] pegvalues) -> zero depth, specified values
- * Pattern(Pattern parent) -> parent depth + 1, parent values
+ * Pegs() -> zero depth, random values
+ * Pegs(int[] pegvalues) -> zero depth, specified values
+ * Pegs(Pegs parent) -> parent depth + 1, parent values
  * 
  * PSEUDO-CONSTRUCTOR:
- * Pattern Clone() -> create copy of the Pattern object
+ * Pegs Clone() -> create copy of the Pegs object
  * 
  * ACCESSOR METHODS:
  * int Get(int index)
  * int[] GetArray() -> returns the actual array object
  * int[] CopyArray() -> returns a new array with the same values
  * int Depth()
- * Pattern Next()
+ * Pegs Next()
  * int CountMatch() -> correct color, correct position
  * int CountMiss() -> correct color, incorrect position, not a match 
  * 
  * void Set(int index, int newvalue)
  * void SetValues(int[] newvalues) -> Generally do not use
- * void SetNext(Pattern nextpattern)
- * void SetPrevious(Pattern previouspattern)
+ * void SetNext(Pegs nextpattern)
+ * void SetPrevious(Pegs previouspattern)
  * 
  * COMPARING:
- * void Evaluate(Pattern solution)
+ * void Evaluate(Pegs solution)
  *   -> Crucial to evaluating this node. It compares the sequence against the
  *      solution sequence. Then, it sets the number of correct and missed
- *      values in this Pattern.
+ *      values in this Pegs.
  * 
- * boolean Equals(Pattern other)
+ * boolean Equals(Pegs other)
  * boolean EqualsV(int[] othervalues)
  *   -> Whether this sequence of values matches a given sequence of values
  * .
- * boolean Equivalent(Pattern other)
+ * boolean Equivalent(Pegs other)
  * boolean EquivalentV(int[] othervalues)
  *   -> Whether the set of values have the same values
  * 
- * boolean HasVisited(ArrayList<Pattern> visitedlist).
+ * boolean HasVisited(ArrayList<Pegs> visitedlist).
  * boolean HasVisitedV(ArrayList<int[]> visitedvalueslist)
- *   -> Same as above, but compare to int array rather than a Pattern object.
+ *   -> Same as above, but compare to int array rather than a Pegs object.
  * 
  * OTHER:
- * Pattern Shuffle()
+ * Pegs Shuffle()
  *   -> Rearranges the values, without adding or removing values from the
- *      sequence. Returns this Pattern (not a copy).
+ *      sequence. Returns this Pegs (not a copy).
  */
 
 /**
  * @author Michael Davis, Sothiara Em, Jamison Hyman
  */
-public class Pattern {
+public class Pegs {
     private int[] values;
     private int depth = 0; // entropy should be a function of depth?
-    private Pattern previous = null;
-    private Pattern next = null;
+    private Pegs previous = null;
+    private Pegs next = null;
     private int countMatch = 0;
     private int countMiss = 0;
   
@@ -75,7 +75,7 @@ public class Pattern {
      * Can be used for root node
      * @param pegvalues 
      */
-    public Pattern(int[] pegvalues)
+    public Pegs(int[] pegvalues)
     {
         this.values = pegvalues;
     }
@@ -85,7 +85,7 @@ public class Pattern {
      * Pass in no arguments: it randomly sets the integer values
      * Used for root node
      */
-    public Pattern()
+    public Pegs()
     {
         this.values = new int [NumberOfPegs];
         for (int i=0; i<values.length; i++)
@@ -95,11 +95,11 @@ public class Pattern {
     }
     
     /**
-     * Constructor C: Make a child node of the arg parent Pattern
+     * Constructor C: Make a child node of the arg parent Pegs
      * Not used as the root node
      * @param parent 
      */
-    public Pattern(Pattern parent)
+    public Pegs(Pegs parent)
     {
         this.depth = parent.Depth() +1;
         this.previous = parent;
@@ -109,12 +109,12 @@ public class Pattern {
     
     // Returns an absolute clone
     /**
-     * Duplicates a Pattern node object, with all of the same values
+     * Duplicates a Pegs node object, with all of the same values
      * @return 
      */
-    public Pattern Clone()
+    public Pegs Clone()
     {
-        Pattern clone = new Pattern(this);
+        Pegs clone = new Pegs(this);
         clone.previous = this.previous;
         clone.depth = this.depth;
         clone.next = this.next;
@@ -124,11 +124,11 @@ public class Pattern {
     }
     
     /**
-     * Used to test whether or not a Pattern node has been visited
+     * Used to test whether or not a Pegs node has been visited
      * @param other
      * @return 
      */
-    public boolean Equal(Pattern other)
+    public boolean Equal(Pegs other)
     {
         boolean equal = true;
         for(int i=0; i<values.length; i++) {
@@ -167,8 +167,8 @@ public class Pattern {
      * Parent node
      * @return 
      */
-    public Pattern Previous() { return this.previous; }
-    public void SetPrevious(Pattern prevpeg) {
+    public Pegs Previous() { return this.previous; }
+    public void SetPrevious(Pegs prevpeg) {
         this.previous = prevpeg;
         this.depth = prevpeg.Depth()+1;
     }
@@ -177,8 +177,8 @@ public class Pattern {
      * Child node
      * @return 
      */
-    public Pattern Next() { return this.next; }
-    public void SetNext(Pattern nextpeg) { this.next = nextpeg; }
+    public Pegs Next() { return this.next; }
+    public void SetNext(Pegs nextpeg) { this.next = nextpeg; }
     
     /**
      * The number of correct position + color pegs
@@ -229,7 +229,7 @@ public class Pattern {
         else return false;
     }
     
-    public boolean Equivalent(Pattern other)
+    public boolean Equivalent(Pegs other)
     {
         int i, j;
         int found = 0;
@@ -250,14 +250,21 @@ public class Pattern {
     
     
     /**
-     * Pass in the solution Pattern
+     * Pass in the solution Pegs
      * Sets the number of matching pegs
      * Sets the number of missed pegs
      * @param solution 
      */
-    public void Evaluate(Pattern solution)
+    public Reply Evaluate(Pegs solution)
     {
-        int i, j;
+        //int i, j;
+        Reply reply = new Reply(this, solution);
+        
+        this.countMiss = reply.Misses();
+        this.countMatch = reply.Matches();
+        return reply;
+        /*
+        
         int score_match = 0;
         int score_miss = 0;
         int [] solution_values = solution.CopyArray();
@@ -282,6 +289,7 @@ public class Pattern {
         this.countMiss = score_miss;
         //System.out.println("(Match: "+score_match+", miss: "+score_miss+")");
         // # match and # miss are set
+        */
     }
     
     /**
@@ -289,9 +297,9 @@ public class Pattern {
      * @param list
      * @return 
      */
-    public boolean HasVisited(ArrayList<Pattern> list)
+    public boolean HasVisited(ArrayList<Pegs> list)
     {
-        Pattern p;
+        Pegs p;
         for (int i=0; i<list.size(); i++) { 
             p = list.get(i);
             if (this.Equal(p)==true)
@@ -309,7 +317,7 @@ public class Pattern {
     }
     
     /**
-     * Make a new int[] array with the same values as this Pattern
+     * Make a new int[] array with the same values as this Pegs
      * @return 
      */
     public int[] CopyArray()
@@ -354,7 +362,7 @@ public class Pattern {
      * This is called the Fisher–Yates shuffle
      * @return 
      */
-    public Pattern Shuffle()
+    public Pegs Shuffle()
     {
         int index, v;
  //       System.out.print("Shuffling "+this.toString());

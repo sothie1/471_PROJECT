@@ -12,7 +12,7 @@ import java.util.Random;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import mastermind.Pattern;
+import mastermind.Pegs;
 import static mastermind.Mastermind.NumberOfColors;
 import static mastermind.Mastermind.NumberOfPegs;
 import static mastermind.Mastermind.MaxGuesses;
@@ -82,7 +82,7 @@ public class FiveGuess {
                     
         private int numChars;
         private int gamePossible;
-        private ArrayList<Pattern> prevGuesses;
+        private ArrayList<Pegs> prevGuesses;
         private ArrayList<Integer> prevGuessInt;
         private ArrayList<Integer> prevGuessHit;
         private ArrayList<Integer> prevGuessMiss;
@@ -94,7 +94,7 @@ public class FiveGuess {
         public gNode(int game, int numChars, int gamePossible){  
           this.numChars = numChars;
           this.gamePossible = gamePossible;
-          prevGuesses = new ArrayList<Pattern>();
+          prevGuesses = new ArrayList<Pegs>();
           prevGuessInt = new ArrayList<Integer>();
           prevGuessHit = new ArrayList<Integer>();
           prevGuessMiss = new ArrayList<Integer>();
@@ -135,15 +135,15 @@ public class FiveGuess {
                 System.out.print(i);
             }
             System.out.println("Number of pegs first: " + numChars + "\n");
-            Pattern solution = new Pattern(answerArray);
+            Pegs solution = new Pegs(answerArray);
             NumberOfPegs = numChars;
             // Random guss
-            Pattern guess = new Pattern(getRandom(gamePossible));
+            Pegs guess = new Pegs(getRandom(gamePossible));
             int numGuess = 0;
             while(true){
              //   System.out.println("Stuck here 1");
                  numGuess++;
-                 //Pattern copyGuess = guess.Clone();
+                 //Pegs copyGuess = guess.Clone();
                  System.out.println("Guessing now: " + guess.toString());
                  guess.Evaluate(solution);
                  prevGuesses.add(guess);
@@ -159,7 +159,7 @@ public class FiveGuess {
                  }
                  while(true){
            //          System.out.println("Stuck here 2");
-                     guess = new Pattern(getRandom(gamePossible));
+                     guess = new Pegs(getRandom(gamePossible));
                      boolean consistent = true;
                      for (int i = 0; i < prevGuesses.size(); i++){
                          guess.Evaluate(prevGuesses.get(i));

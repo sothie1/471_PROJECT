@@ -9,22 +9,22 @@ package mastermind;
  * @author Michael Davis, Sothiara Em, Jamison Hyman
  */
 public class GameResult {
-    private Pattern solution;
-    private Pattern result;
+    private Pegs solution;
+    private Pegs result;
     private boolean solved;
     private int turns;
-    public GameResult(Pattern solution, Pattern result, boolean solved, int turns)
+    public GameResult(Pegs solution, Pegs result, boolean solved, int turns)
     {
         this.solution = solution;
         this.result = result;
         this.solved = solved;
         this.turns = turns;
     }
-    public Pattern Solution()
+    public Pegs Solution()
     {
         return this.solution;
     }
-    public Pattern Result()
+    public Pegs Result()
     {
         return this.result;
     }
