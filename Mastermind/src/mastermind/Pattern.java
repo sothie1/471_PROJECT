@@ -278,11 +278,7 @@ public class Pattern {
                     solution_values[i] = -2;
                     score_miss++;
                     break;
-        }
-               }catch(Exception e){
-                   System.out.println("solutionLength " + solution_values.length + " guess length: " + guess_values.length);
-               }
-           }}
+           }}}
         this.countMiss = score_miss;
         //System.out.println("(Match: "+score_match+", miss: "+score_miss+")");
         // # match and # miss are set

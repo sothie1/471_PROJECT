@@ -21,7 +21,7 @@ public class SimpleGuess {
         int PatternLength = solution.GetArray().length;
         boolean solved = false;
         Pattern guess = new Pattern();
-        Pattern old_guess;
+        Pattern old_guess = null;
         ArrayList<int[]> unexplored = mastermind.Mastermind.SearchSpace();
         ArrayList<int[]> visited = new ArrayList<>();
         int phase = 0;
@@ -34,9 +34,6 @@ public class SimpleGuess {
             visited.add(guess.GetArray());
             guess.Evaluate(solution);
             System.out.print("Reduction guess "+NGuesses+": "+guess.toString());
-            //System.out.print(" vs. solution: "+solution.toString(ColorPalette));
-            
-            
             System.out.print(";\t"+ guess.CountMatch()+" match, "+guess.CountMiss()+" miss.");
             System.out.println();
             if (phase==0 && guess.CountMatch()+guess.CountMiss()==PatternLength)
@@ -59,7 +56,6 @@ public class SimpleGuess {
                         if (guess.EquivalentV(unexplored.get(i)))
                         {   unexplored.remove(i);   }
                 }}
-                old_guess = guess;
                 /* THIS IS WHERE THE HEURISTIC GOES */
                 if (old_guess!=null)
                 { guess.SetPrevious(old_guess);
