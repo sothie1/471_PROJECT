@@ -43,8 +43,8 @@ public class TypeCulling {
         Random R = new Random();
         int PegsLength = solution.GetArray().length;
         boolean solved = false;
-        Pegs guess = new Pegs(initialguess);
         ArrayList<int[]> unexplored = mastermind.Mastermind.SearchSpace();
+        Pegs guess = new Pegs(unexplored.get(0));
         ArrayList<int[]> visited = new ArrayList<>();
         int do_once = 0;
         Reply reply = new Reply();
