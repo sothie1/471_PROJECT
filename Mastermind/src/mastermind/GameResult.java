@@ -13,13 +13,22 @@ public class GameResult {
     private Pegs result;
     private boolean solved;
     private int turns;
-    public GameResult(Pegs solution, Pegs result, boolean solved, int turns)
+    private long time;
+
+    public GameResult(Pegs solution, Pegs result, boolean solved, int turns, long time)
     {
         this.solution = solution;
         this.result = result;
         this.solved = solved;
         this.turns = turns;
+        this.time = time;
     }
+    // we probably won't even need to check time
+    public GameResult(Pegs solution, Pegs result, boolean solved, int turns)
+    {
+        this(solution, result, solved, turns, (long)0.00);
+    }
+    
     public Pegs Solution()
     {
         return this.solution;
@@ -32,6 +41,10 @@ public class GameResult {
     {
         return this.solved;
     }
+    public long Time()
+    {
+        return this.time;
+    }
     public int Turns()
     {
         return this.turns;
@@ -39,12 +52,14 @@ public class GameResult {
     @Override public String toString()
     {
         return "{Result: " + this.result.toString()+
-                ", solved: "+this.solved+" turns: "+this.turns+"}";
+                ", solved: "+this.solved+" turns: "+this.turns;
+//                + ", time: "+this.time+"}";
     }
     public String toString(String[] palette)
     {
         return "{Result: " + this.result.toString(palette)+
-                ", solved: "+this.solved+", turns: "+this.turns+"}";
+                ", solved: "+this.solved+", turns: "+this.turns;
+//                + ", time: "+this.time+"}";
     }
     
 }

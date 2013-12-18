@@ -68,7 +68,6 @@ public class Pegs {
     private int countMiss = 0;
   
     int NumberOfPegs = Mastermind.NumberOfPegs;
-    Random R = Mastermind.R;
 
     /**
      * Constructor A: Pass in an array of integer values
@@ -87,10 +86,11 @@ public class Pegs {
      */
     public Pegs()
     {
+        Random R = new Random();
         this.values = new int [NumberOfPegs];
         for (int i=0; i<values.length; i++)
         {
-            this.values[i] = Mastermind.R.nextInt(Mastermind.NumberOfColors);
+            this.values[i] = R.nextInt(Mastermind.NumberOfColors);
         }
     }
     
@@ -365,6 +365,7 @@ public class Pegs {
     public Pegs Shuffle()
     {
         int index, v;
+        Random R = new Random();
  //       System.out.print("Shuffling "+this.toString());
         for (int i = values.length - 1; i > 1; i--)
         {

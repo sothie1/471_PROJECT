@@ -13,10 +13,7 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import mastermind.Pegs;
-import static mastermind.Mastermind.NumberOfColors;
-import static mastermind.Mastermind.NumberOfPegs;
-import static mastermind.Mastermind.MaxGuesses;
-import static mastermind.Mastermind.R;
+import static mastermind.Mastermind.*;
 /**
  *
  * @author Jamison
@@ -27,6 +24,8 @@ public class FiveGuess {
     public int [] lengthEach;
     public int [] gamePossible;
     private File txtFile;
+    
+    private static Random R = new Random();
     
     private FiveGuess(String txtFile){
         this.txtFile = new File(txtFile);

@@ -5,6 +5,7 @@
 package mastermind_strategies;
 import mastermind.Pegs;
 import java.util.ArrayList;
+import java.util.Random;
 import mastermind.GameResult;
 import mastermind.Reply;
 import static mastermind.Mastermind.*;
@@ -14,19 +15,24 @@ import static mastermind.Mastermind.*;
  * the solution is in the set of X where
  * DIFFERENCE(guess, solution) = DIFFERENCE(guess, X)
  * Each guess must be better than the previous one.
+ * 
  * @author Michael Davis, Sothiara Em, Jamison Hyman
  */
-public class MayoGuess {
+public class MickeyMouse {
     private static int GuessCount;
 
-    public static GameResult Solve(Pegs solution)
+    public static GameResult Solve(Pegs solution, int[] initialguess){
+        return MickeyMouse.Solve(solution, initialguess, 0);
+    }
+    
+    public static GameResult Solve(Pegs solution, int[] initialguess, int verbose)
     {
         int i, nextindex, NGuesses = 0;
+        Random R = new Random();
         int PegsLength = solution.GetArray().length;
         boolean solved = false;
-        Pegs guess = new Pegs();
+        Pegs guess = new Pegs(initialguess);
         Pegs dummyguess = new Pegs();
-        Pegs old_guess = null;
         ArrayList<int[]> unexplored = mastermind.Mastermind.SearchSpace();
         ArrayList<int[]> visited = new ArrayList<>();
         int do_once = 0;
@@ -35,14 +41,14 @@ public class MayoGuess {
         
         while(NGuesses<MaxGuesses && !solved && unexplored.size()>0) {
             NGuesses++;
-            nextindex = R.nextInt(unexplored.size());
-            guess = new Pegs(unexplored.get(nextindex));
             unexplored.remove(guess.GetArray());
             visited.add(guess.GetArray());
             reply = reply.Evaluate(guess, solution);
-           /* System.out.print("MayoGuess guess "+NGuesses+": "+guess.toString());
-            System.out.print(";\t"+ reply.Match()+" match, "+reply.Miss()+" miss.");
-            System.out.println(); */
+            if (verbose!=0){
+                System.out.print("MayoGuess guess "+NGuesses+": "+guess.toString());
+                System.out.print(";\t"+ reply.Match()+" match, "+reply.Miss()+" miss.");
+                System.out.println();
+            }
             if (reply.Match()==PegsLength) { solved = true; break ;}
             else if (do_once==0 && reply.Both()==PegsLength)
             {
@@ -51,12 +57,12 @@ public class MayoGuess {
                     if (!guess.EquivalentV(unexplored.get(i)))
                     {unexplored.remove(i);   }
             }}
-            else if (do_once==0)
+            else if (reply.Both()!=PegsLength)
             {
                 for (i=unexplored.size()-1; i>=0; i--){
                     if (guess.EquivalentV(unexplored.get(i)))
-                    {   unexplored.remove(i);   }
-            }}
+                    {   unexplored.remove(i);   }}                    
+            }
             // Compare this guess to unexplored guesses, see which ones
             // could logically be the answer
             for (i=unexplored.size()-1; i>=0; i--)
@@ -69,11 +75,9 @@ public class MayoGuess {
                     unexplored.remove(i);
                 }
             }
-            if (old_guess!=null)
-                { guess.SetPrevious(old_guess);
-                old_guess.SetNext(guess); }
-                old_guess = guess;
-            
+            nextindex = R.nextInt(unexplored.size());
+            guess = new Pegs(guess);
+            guess.SetArray(unexplored.get(nextindex));
         }
         GuessCount = NGuesses;
         //System.out.println("Solved? "+solved);

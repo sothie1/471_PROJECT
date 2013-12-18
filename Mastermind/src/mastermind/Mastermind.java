@@ -16,9 +16,9 @@ import mastermind_strategies.*;
  */
 public class Mastermind  {
     
-    public static int NumberOfPegs = 6;
+    public static int NumberOfPegs = 4;
     public static int NumberOfColors = 8;
-    public static int MaxGuesses = 10;
+    public static int MaxGuesses = 12;
     public static Random R = new Random();
 
     public static ArrayList<int[]> SearchSpace()
@@ -42,7 +42,8 @@ public class Mastermind  {
     }
     
     public static String[] ColorPalette = {"Red", "Blue", "Green", "White",
-            "Yellow", "Magenta", "Cyan", "Black", "Orange"};
+            "Yellow", "Magenta", "Cyan", "Black", "Orange", "Lime",
+            "Brown", "Pink", "Gold", "Silver", "Indigo", "Purple"};
     
     public static void main(String[] args) {
         
@@ -50,14 +51,24 @@ public class Mastermind  {
         
         R.nextInt();
         Pegs solution = new Pegs();
-
-        System.out.println("Solution:\t"+solution.toString());
-        GameResult game1 = JellyGuess.Solve(solution);
-        System.out.println("Jelly solve: "+game1.toString(ColorPalette));
-        GameResult game2 = SimpleGuess.Solve(solution);
-        System.out.println("Reducer solve: "+game2.toString(ColorPalette));
-        GameResult game3 = MayoGuess.Solve(solution);
-        System.out.println("Barney solve: "+game3.toString(ColorPalette));
+        
+        System.out.println("Solution:\t"+solution.toString()+"("+solution.toString(ColorPalette)+")");
+        //GameResult game1 = JellyGuess.Solve(solution);
+        //System.out.println("Jelly solve: "+game1.toString(ColorPalette));
+        
+        int[] initialguess = new int[]{2,1,7,2};
+        
+        GameResult game2 = SimpleGuess.Solve(solution,initialguess);
+        System.out.println("Simple solve: "+game2.toString(ColorPalette));     
+        
+        GameResult game3 = MickeyMouse.Solve(solution,initialguess);
+        System.out.println("With score-equivalent solve: "+game3.toString(ColorPalette));
+        
+        GameResult game4 = WalterWhite.Solve(solution,initialguess);
+        System.out.println("With no-value checking: "+game4.toString(ColorPalette));
+        
+        GameResult game5 = JamesBond.Solve(solution,initialguess);
+        System.out.println("Combined strategy: "+game5.toString(ColorPalette));
     }
 
 }
