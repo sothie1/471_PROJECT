@@ -10,35 +10,33 @@ import mastermind.GameResult;
 import mastermind.Reply;
 import static mastermind.Mastermind.*;
 /**
- * Random search algorithm, with basic evaluation.
+ * Lexicographic search algorithm, with basic evaluation.
  * Reduces search space by eliminating permutations of previous guesses:
  * 1. If guess X is not a permutation of the solution, then all guesses Y that
  * are permutations of X cannot be the solution either.
  * 2. If guess Z is a permutation of the solution, then all guesses Y that are
  * not permutations of Z cannot be the solution. (This happens at most once.)
- * The next guess is randomly chosen from the remaining guess space.
+ * The next guess is the next "in order" from unexplored guess space.
  * 
  * @author Michael Davis, Sothiara Em, Jamison Hyman
  */
-public class SimpleGuess {
+public class LexicoPlus {
     private static int GuessCount;
 
     public static GameResult Solve(Pegs solution, Pegs initialguess)
     {
-        return SimpleGuess.Solve(solution, initialguess, 0);
+        return LexicoPlus.Solve(solution, null, 0);
     }
     
     public static GameResult Solve(Pegs solution, Pegs initialguess, int verbose)
     {
         int NGuesses = 0;
-        Random R = new Random();
         int PegsLength = solution.GetArray().length;
         boolean solved = false;
-        Pegs guess = new Pegs(initialguess);
         ArrayList<int[]> unexplored = mastermind.Mastermind.SearchSpace();
+        Pegs guess = new Pegs(unexplored.get(0));
         ArrayList<int[]> visited = new ArrayList<>();
         int do_once = 0;
-        int nextindex;
         Reply reply = new Reply();
         
         while(NGuesses<MaxGuesses && !solved && unexplored.size()>0) {
@@ -47,7 +45,7 @@ public class SimpleGuess {
             visited.add(guess.GetArray());
             reply = reply.Evaluate(guess, solution);
             if (verbose!=0){
-                System.out.print("Simple guess "+NGuesses+": "+guess.toString());
+                System.out.print("Smarter lexicographic guess "+NGuesses+": "+guess.toString());
                 System.out.print(";\t"+ reply.Match()+" match, "+reply.Miss()+" miss.");
                 System.out.println();
             }
@@ -70,9 +68,8 @@ public class SimpleGuess {
                     {   unexplored.remove(i);   }
                 }
             }
-            nextindex = R.nextInt(unexplored.size());
             guess = new Pegs(guess);
-            guess.SetArray(unexplored.get(nextindex));
+            guess.SetArray(unexplored.get(0));
         }
         GuessCount = NGuesses;
         return new GameResult(solution, guess, solved, NGuesses);

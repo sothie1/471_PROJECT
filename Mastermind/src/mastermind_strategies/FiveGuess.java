@@ -1,4 +1,7 @@
 /*
+ * Copyright (C) 2013, Wayne Enterprises
+ */
+/*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */

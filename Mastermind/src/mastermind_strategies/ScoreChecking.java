@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, The Council of Elrond
+ * Copyright (C) 2013, Wayne Enterprises
  */
 
 package mastermind_strategies;
@@ -10,22 +10,29 @@ import mastermind.GameResult;
 import mastermind.Reply;
 import static mastermind.Mastermind.*;
 /**
- * Advanced random search algorithm.
- * Because DIFFERENCE(guess, solution) = DIFFERENCE(solution, guess)
- * the solution is in the set of X where
- * DIFFERENCE(guess, solution) = DIFFERENCE(guess, X)
- * Each guess must be better than the previous one.
+ * Advanced random search algorithm. Reduces search space to sets of guesses
+ * which must contain the solution, based on the score difference with the
+ * current guess.
+ * 
+ * Let F(pegs1, pegs2) be the evaluation function, and for each guess,
+ * F(A, B) = F(B, A) = (X matches, Y misses).
+ * For a guess pegs p1, if F(p1,solution)=(X1,Y1), then there is at least
+ * one unexplored guess p2 such that F(p1,p2)=(X1,Y1). The solution must be in
+ * the set of guesses p2 in which that case is true.
+ * 
+ * Because this check happens on each iteration, this strategy requires a lot
+ * of computational time; however it takes significantly fewer guesses.
  * 
  * @author Michael Davis, Sothiara Em, Jamison Hyman
  */
-public class MickeyMouse {
+public class ScoreChecking {
     private static int GuessCount;
 
-    public static GameResult Solve(Pegs solution, int[] initialguess){
-        return MickeyMouse.Solve(solution, initialguess, 0);
+    public static GameResult Solve(Pegs solution, Pegs initialguess){
+        return ScoreChecking.Solve(solution, initialguess, 0);
     }
     
-    public static GameResult Solve(Pegs solution, int[] initialguess, int verbose)
+    public static GameResult Solve(Pegs solution, Pegs initialguess, int verbose)
     {
         int i, nextindex, NGuesses = 0;
         Random R = new Random();
@@ -45,7 +52,7 @@ public class MickeyMouse {
             visited.add(guess.GetArray());
             reply = reply.Evaluate(guess, solution);
             if (verbose!=0){
-                System.out.print("MayoGuess guess "+NGuesses+": "+guess.toString());
+                System.out.print("Score-comparison guess "+NGuesses+": "+guess.toString());
                 System.out.print(";\t"+ reply.Match()+" match, "+reply.Miss()+" miss.");
                 System.out.println();
             }

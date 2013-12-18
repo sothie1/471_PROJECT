@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, The Council of Elrond
+ * Copyright (C) 2013, Wayne Enterprises
  */
 
 package mastermind_strategies;
@@ -10,26 +10,19 @@ import mastermind.GameResult;
 import mastermind.Reply;
 import static mastermind.Mastermind.*;
 /**
- * Advanced random search algorithm.
- * Because DIFFERENCE(guess, solution) = DIFFERENCE(solution, guess)
- * the solution is in the set of X where
- * DIFFERENCE(guess, solution) = DIFFERENCE(guess, X)
- * Each guess must be better than the previous one.
- * 
- * Also includes culling feature in case no colors were found
- * in a guess; it will eliminate any guess with any of those
- * colors from guess space.
+ * Advanced random search algorithm. Combines the score-checking
+ * strategy with the type-based culling strategy.
  * 
  * @author Michael Davis, Sothiara Em, Jamison Hyman
  */
 public class JamesBond {
     private static int GuessCount;
 
-    public static GameResult Solve(Pegs solution, int[] initialguess){
+    public static GameResult Solve(Pegs solution, Pegs initialguess){
         return JamesBond.Solve(solution, initialguess, 0);
     }
     
-    public static GameResult Solve(Pegs solution, int[] initialguess, int verbose)
+    public static GameResult Solve(Pegs solution, Pegs initialguess, int verbose)
     {
         int i, j, nextindex, NGuesses = 0;
         Random R = new Random();
@@ -49,7 +42,7 @@ public class JamesBond {
             visited.add(guess.GetArray());
             reply = reply.Evaluate(guess, solution);
             if (verbose!=0){
-                System.out.print("James Bond guess "+NGuesses+": "+guess.toString());
+                System.out.print("Combined strategy guess "+NGuesses+": "+guess.toString());
                 System.out.print(";\t"+ reply.Match()+" match, "+reply.Miss()+" miss.");
                 System.out.println();
             }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, The Council of Elrond
+ * Copyright (C) 2013, Wayne Enterprises
  */
 
 package mastermind_strategies;
@@ -10,26 +10,34 @@ import mastermind.GameResult;
 import mastermind.Reply;
 import static mastermind.Mastermind.*;
 /**
- * Advanced random search algorithm, with culling.
- * 
+ * Advanced random search algorithm, with color(type)-based culling.
  * Checks for special cases where a guess has no misses or matches. In
  * this case, it iterates through all of the colored pegs in the guess,
  * then eliminates all guesses from unexplored space. It is a very expensive
- * operation but is very powerful when the number of colors is large.
+ * operation but is very effective when the number of colors is large.
+ * 
+ * 1. If guess X is not a permutation of the solution, then all guesses Y that
+ * are permutations of X cannot be the solution either.
+ * 2. If guess Z is a permutation of the solution, then all guesses Y that are
+ * not permutations of Z cannot be the solution. (This happens at most once.)
+ * 3. If guess X has pegs A,B,C but the solution does not have A, B, or C,
+ * then all guesses Y containing A, B, or C cannot be the solution. (Culling)
+ * The next guess is randomly chosen from the remaining guess space.
+
  * 
  * @author Michael Davis, Sothiara Em, Jamison Hyman
  */
-public class WalterWhite {
+public class TypeCulling {
     private static int GuessCount;
     
 
 
-    public static GameResult Solve(Pegs solution, int[] initialguess)
+    public static GameResult Solve(Pegs solution, Pegs initialguess)
     {
-        return WalterWhite.Solve(solution, initialguess, 0);
+        return TypeCulling.Solve(solution, null, 0);
     }
     
-    public static GameResult Solve(Pegs solution, int[] initialguess, int verbose)
+    public static GameResult Solve(Pegs solution, Pegs initialguess, int verbose)
     {
         int i, j, nextindex, NGuesses = 0;
         Random R = new Random();
@@ -47,7 +55,7 @@ public class WalterWhite {
             visited.add(guess.GetArray());
             reply = reply.Evaluate(guess, solution);
             if (verbose!=0){
-                System.out.print("Absence-based guess "+NGuesses+": "+guess.toString());
+                System.out.print("Color-culling guess "+NGuesses+": "+guess.toString());
                 System.out.print(";\t"+ reply.Match()+" match, "+reply.Miss()+" miss.");
                 System.out.println();
             }
